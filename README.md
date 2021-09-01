@@ -1,2 +1,2 @@
-# flipkart_grid
-Project on Trust and affluence signal extraction from social media data for Flipkart Grid 3.0
+# Trust and affluence signal extraction from social media data
+`Flipkart_Grid 3.0`
