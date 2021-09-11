@@ -3,7 +3,7 @@
 
 `Flipkart_Grid 3.0`
 
-## Requirements
+# Requirements
 - Python3 latest version recommended 
 - pipenv(For virtual Environment) `Run pip3 install pipenv`
 
@@ -13,3 +13,9 @@
 - To run webApp
   - `cd credsly`
   - `python3 manage.py runserver`
+- To exit virtual environment run `exit`
+
+# Team
+- Mohit Bhat
+- Avinash Kumar
+- Aditya Singh
