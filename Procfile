@@ -1,1 +1,1 @@
-web: gunicorn chdir credsly.credsly.wsgi
+web: gunicorn --chdir credsly.credsly.wsgi
