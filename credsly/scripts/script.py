@@ -87,11 +87,18 @@ def get_all_tweets(screen_name,api):
         
     
     #transform the tweepy tweets into a 2D array that will populate the csv 
-    outtweets = [[tweet.id_str, tweet.created_at, tweet.text,tweet.favorite_count] for tweet in alltweets]
-    print(len(outtweets))
-    tweetData={}       #dictionary to store all the data
-    for i in range(len()):
+    outtweets = [[tweet.id_str, tweet.text,tweet.favorite_count] for tweet in alltweets]
     
+    #Coverting the 2D data into dictionary
+    column_names=['id','tweet','likes']
+    tweetData={}
+    for i in range(len(outtweets)):
+        subTweets={}
+        for j in range(len(outtweets[i])):
+            subTweets[column_names[j]]=outtweets[i][j]
+        tweetData[i]=subTweets
+    
+    print(json.dumps(tweetData,sort_keys=False,indent=2))
     #write the csv  
     # with open(f'new_{screen_name}_tweets.csv', 'w') as f:
     #     writer = csv.writer(f)
