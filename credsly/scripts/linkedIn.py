@@ -3,6 +3,25 @@ import os
 import shutil
 import json
 import pandas as pd
+import boto3
+import base64
+
+ACCESS_KEY="AKIAQI6GMTIGYNVJZOAQ"
+SECRET_KEY="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"
+# client = boto3.client(
+#     'rekognition',
+#     aws_access_key_id=ACCESS_KEY,
+#     aws_secret_access_key=SECRET_KEY,
+#     region_name = 'us-west-2'
+# )
+
+client = boto3.client(
+    'comprehend',
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY,
+    region_name = 'us-west-2'
+)
+
 
 file_name = "../userDataUploads/linkedInData.zip"  #testing
 userID='avinash'
@@ -104,3 +123,17 @@ def getTotalConnections(path):
     
 #getlinkedInData(file_name,'avinash')
 
+
+image = open(path+"/cat.jpg", 'rb')
+
+image_read = image.read()
+
+
+response = client.detect_moderation_labels(
+    Image={
+        'Bytes': image_read,
+    }
+)
+
+
+print(response)
