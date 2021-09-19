@@ -10,6 +10,7 @@ whitenoise = "*"
 tweepy = "*"
 pandas = "*"
 requests = "*"
+boto3 = "*"
 
 [dev-packages]
 
