@@ -8,13 +8,18 @@ from requests_oauthlib import OAuth1
 from oauthlib.oauth2 import BackendApplicationClient
 from requests.auth import HTTPBasicAuth
 from urllib.parse import quote_plus
-from pandas import DataFrame
+import pandas as pd
 import spacy
 from profanity_filter import ProfanityFilter
+from purgo_malum import client as client1
 import csv
 import boto3
 
-#Function to convert credentials to access token
+
+
+
+
+
 
 #Twitter credentials
 consumer_key = 'Fkq1YtWMXJfm7rqFQe6bUMKnk'
@@ -47,7 +52,7 @@ def veryfyingUser():
         print("Error during authentication")
 
     return api
-api= veryfyingUser()
+#api= veryfyingUser()
 
 
 
@@ -77,7 +82,7 @@ def userInfo(api,screen_name):
     tweetData['total_likes']= totalLikes
     tweetData['tweets']= tweetsList
     return tweetData
-tweetData=userInfo(api,'mbcse50')
+#tweetData=userInfo(api,'mbcse50')
 
 #Sentiment Analysis of the data
 positiveScore=0
@@ -103,10 +108,6 @@ negativeScore=0
 # print(positivityPercent,' ',negativityPercent)
 
 
+if(client1.contains_profanity('You are an @a$$hole')):      #Checks for Bad words
+    print(True)
 
-nlp = spacy.load('en')
-profanity_filter = ProfanityFilter(nlps={'en': nlp})  # reuse spacy Language (optional)
-nlp.add_pipe(profanity_filter.spacy_component, last=False)
-doc = nlp('This is shiiiit!')
-print(doc._.is_profane)
-# True
