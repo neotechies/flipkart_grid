@@ -136,7 +136,7 @@ def getProfileInfo(path):
         return None
 
 
-image = open(path+"/photos_and_videos/Coverphotos_2xJEHDkR2g/img.jpeg", 'rb')
+image = open(path+"/photos_and_videos/Coverphotos_2xJEHDkR2g/11407209_718802094913989_8372182250437187209_n_718802094913989.jpg", 'rb')
 image_read = image.read()
 
 response = client.detect_moderation_labels(
