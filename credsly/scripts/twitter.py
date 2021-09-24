@@ -9,8 +9,6 @@ from oauthlib.oauth2 import BackendApplicationClient
 from requests.auth import HTTPBasicAuth
 from urllib.parse import quote_plus
 import pandas as pd
-import spacy
-from profanity_filter import ProfanityFilter
 from purgo_malum import client as client1
 import csv
 import boto3

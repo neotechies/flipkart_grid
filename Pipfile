@@ -11,9 +11,6 @@ tweepy = "*"
 pandas = "*"
 requests = "*"
 boto3 = "*"
-profanity-filter = "*"
-spacy = "==2.3.7"
-spacy-langdetect = "*"
 purgomalum = "*"
 
 [dev-packages]
