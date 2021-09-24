@@ -5,6 +5,7 @@ import json
 import boto3
 import glob
 from purgo_malum import client as client1
+import multiprocessing
 
 ACCESS_KEY="AKIAQI6GMTIGYNVJZOAQ"
 SECRET_KEY="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"
@@ -74,7 +75,7 @@ def getReceivedFriendRequestsCount(path):
 #         return None
 
 
-def getPageFollowedList(path):
+def getPageFollowedList(path, return_dict):
     print("Starting Analysis Of Pages Followed...")
     try:
         f = open(path+"/pages/pages_you_follow.json",)
@@ -89,7 +90,8 @@ def getPageFollowedList(path):
                         negativePages+=1 
             except Exception as e:
                 print(e)            
-
+        return_dict['n2']=negativePages
+        return_dict['t2']=totalPages
         return (negativePages,totalPages)
     except Exception as e:
         print(e)
@@ -97,7 +99,7 @@ def getPageFollowedList(path):
     finally:      
         print("Analysis Of Pages Followed Completed")
 
-def getPageLikedList(path):
+def getPageLikedList(path, return_dict):
     print("Starting Analysis Of Pages Liked...")
     try:
         f = open(path+"/pages/pages_you've_liked.json",)
@@ -114,6 +116,8 @@ def getPageLikedList(path):
         #return data['page_likes_v2']
         # print(totalPages)
         # print(negativePages)
+        return_dict['n1']=negativePages
+        return_dict['t1']=totalPages
         return (negativePages,totalPages)
     except Exception as e:
         print(e)
@@ -123,10 +127,24 @@ def getPageLikedList(path):
 
 def getPageList(path):
     print("Starting Analysis Of Pages...")
-    n1,t1 = getPageLikedList(path)
-    n2,t2 = getPageFollowedList(path)  
+    manager = multiprocessing.Manager()
+    return_dict = manager.dict()
+    p1 = multiprocessing.Process(target=getPageLikedList, args=(path,return_dict ))
+    p2 = multiprocessing.Process(target=getPageFollowedList, args=(path, return_dict))
+  
+    # starting process 1
+    p1.start()
+    # starting process 2
+    p2.start()
+  
+    # wait until process 1 is finished
+    p1.join()
+    # wait until process 2 is finished
+    p2.join()
+    # n1,t1 = getPageLikedList(path)
+    # n2,t2 = getPageFollowedList(path)  
     print("Analysis Of Pages Completed")  
-    return (n1+n2)/(t1+t2)   
+    return (return_dict['n1']+return_dict['n2'])/(return_dict['t1']+return_dict['t2'])   
     
 
 
@@ -263,4 +281,4 @@ def getFacebookData(zipName, userID):
     totalNegativeImagesPercentage = getImageSentimentInfo(path)
     profileInfo = getProfileInfo(path)
 
-getFacebookData("dadad","dada")  
+print(getPageList(path))
