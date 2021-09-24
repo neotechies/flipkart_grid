@@ -41,6 +41,7 @@ def checkAndMakeDir(userID):
 
 # Fetching profile information
 def getProfileInfo(path):
+    print("Starting the profile Info analysis...")
     
     try:
         filePath=path+'/Profile.csv'
@@ -51,10 +52,13 @@ def getProfileInfo(path):
     except Exception as e:
         print(e)
         return None
+    finally:
+        print("Analysis completed!!")
 #profileJson=getProfileInfo(path)
 
 
 def getEmail(path):
+    print("Fetching the user's email...")
     try:
         filePath=path+'/Email Addresses.csv'
         data=pd.read_csv(filePath,error_bad_lines=False)
@@ -63,10 +67,13 @@ def getEmail(path):
     except Exception as e:
         print(e)
         return None
+    finally:
+        print("email fetched!!!")
     
 #email=getEmail(path)
 
 def getSentInvitations(path):
+    print("Analysisng the incoming invitations...")
     try:
         filePath=path+'/Invitations.csv'
         data=pd.read_csv(filePath,error_bad_lines=False)
@@ -77,10 +84,15 @@ def getSentInvitations(path):
     except Exception as e:
         print(e)
         return None
+    
+    finally:
+        print('Analysis completed!!!')
+        
 # sentInvites=getSentInvitations(path)
 # print(sentInvites)
 
 def getSkills(path):
+    print("Extracting the users skills...")
     try:
         filePath=path+'/Skills.csv'
         data=pd.read_csv(filePath,error_bad_lines=False)
@@ -90,9 +102,13 @@ def getSkills(path):
     except Exception as e:
         print(e)
         return None
+    
+    finally:
+        print("Extraction done!!!")
 #skillscount=getSkills(path)
 
 def getTotalConnections(path):
+    print("Analysing the total linkedIn connections...")
     try:
         filePath=path+'/Connections.csv'
         data=pd.read_csv(filePath,error_bad_lines=False,skiprows=3)
@@ -101,6 +117,9 @@ def getTotalConnections(path):
     except Exception as e:
         print(e)
         return None   
+    
+    finally:
+        print("Analysis done!!!")
         
 # totalConnections=getTotalConnections(path)
 # print(totalConnections)
@@ -110,30 +129,41 @@ def getTotalConnections(path):
 
 
 
-# def getlinkedInData(zipName, userID):
-#     checkAndMakeDir(userID)
-#     path="../userDataUploads/"+userID+"/linkedIn"
+def getlinkedInData(zipName, userID):
+    checkAndMakeDir(userID)
+    path="../userDataUploads/"+userID+"/linkedIn"
 
-#     with ZipFile(file_name, 'r') as zip:
-#         # extracting all the files
+    with ZipFile(file_name, 'r') as zip:
+        # extracting all the files
         
-#         zip.extractall(path)
+        zip.extractall(path)
+        
+    linkedInData={}
+    
+    profileJson=getProfileInfo(path) 
+    email=getEmail(path)
+    sentInvites=getSentInvitations(path)
+    skillsCount=getSkills(path)
+    totalConnections=getTotalConnections(path)
+    
+    linkedInData['profileData']=profileJson
+    linkedInData['email']= email
+    linkedInData['incomingConnections']=sentInvites
+    linkedInData['skills']=skillsCount
+    linkedInData['totalConnections']= totalConnections
     
     
-    
-#getlinkedInData(file_name,'avinash')
+file_name = "../userDataUploads/linkedInData.zip"  #testing
+userID='avinash'
+linkedInData=getlinkedInData(file_name,'avinash')
+print(linkedInData)
 
 
-image = open(path+"/cat.jpg", 'rb')
-
-image_read = image.read()
-
-
-response = client.detect_moderation_labels(
-    Image={
-        'Bytes': image_read,
-    }
-)
-
-
-print(response)
+# image = open(path+"/cat.jpg", 'rb')
+# image_read = image.read()
+# response = client.detect_moderation_labels(
+#     Image={
+#         'Bytes': image_read,
+#     }
+# )
+# print(response)
