@@ -16,9 +16,6 @@ import boto3
 
 
 
-
-
-
 #Twitter credentials
 consumer_key = 'Fkq1YtWMXJfm7rqFQe6bUMKnk'
 consumer_secret = 'tbQFEXaYskF6vfHMN0xpBhjuDGIYP6vpNk4TYEsbn3ETOj6YKY'
@@ -50,7 +47,7 @@ def veryfyingUser():
         print("Error during authentication")
 
     return api
-#api= veryfyingUser()
+api= veryfyingUser()
 
 
 
@@ -80,32 +77,33 @@ def userInfo(api,screen_name):
     tweetData['total_likes']= totalLikes
     tweetData['tweets']= tweetsList
     return tweetData
-#tweetData=userInfo(api,'mbcse50')
+tweetData=userInfo(api,'mbcse50')
 
 #Sentiment Analysis of the data
-positiveScore=0
-negativeScore=0
+def twitterSentimentAnalysis(tweetData):
+    positiveScore=0
+    negativeScore=0
+    for i in range (len(tweetData['tweets'])):
+        lang_response = client.detect_dominant_language(Text=tweetData['tweets'][i])
+        languages = lang_response['Languages']
+        lang_code = languages[0]['LanguageCode']
+
+        response = client.detect_sentiment(
+                    Text=tweetData['tweets'][i], LanguageCode=lang_code)
+        
+        
+        if(response['Sentiment']=='POSITIVE'):
+            positiveScore+=1
+        elif(response['Sentiment']=='NEGATIVE'):
+            negativeScore+=1
+
+    positivityPercent= (positiveScore/tweetData['tweet_count'])*100
+    negativityPercent= (negativeScore/tweetData['tweet_count'])*100
+    return positivityPercent,negativityPercent
+positivityPercent,negativityPercent= twitterSentimentAnalysis(tweetData)
+print(positivityPercent,negativityPercent)
 
 
-# for i in range (len(tweetData['tweets'])):
-#     lang_response = client.detect_dominant_language(Text=tweetData['tweets'][i])
-#     languages = lang_response['Languages']
-#     lang_code = languages[0]['LanguageCode']
-
-#     response = client.detect_sentiment(
-#                 Text=tweetData['tweets'][i], LanguageCode=lang_code)
-    
-    
-#     if(response['Sentiment']=='POSITIVE'):
-#         positiveScore+=1
-#     elif(response['Sentiment']=='NEGATIVE'):
-#         negativeScore+=1
-
-# positivityPercent= (positiveScore/tweetData['tweet_count'])*100
-# negativityPercent= (negativeScore/tweetData['tweet_count'])*100
-# print(positivityPercent,' ',negativityPercent)
-
-
-if(client1.contains_profanity('You are an @a$$hole')):      #Checks for Bad words
-    print(True)
+# if(client1.contains_profanity('You are an @a$$hole')):      #Checks for Bad words
+#     print(True)
 
