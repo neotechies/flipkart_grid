@@ -11,6 +11,7 @@ tweepy = "*"
 pandas = "*"
 requests = "*"
 boto3 = "*"
+purgomalum = "*"
 
 [dev-packages]
 
