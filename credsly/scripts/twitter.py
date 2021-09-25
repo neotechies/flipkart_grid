@@ -61,7 +61,7 @@ def veryfyingUser():
 
 #Getting other informations of a user
 def userInfo(api,screen_name):
-    user=api.get_user(screen_name)  # fetching the user
+    user=api.get_user(screen_name=screen_name)  # fetching the user
     id= user.id_str
     
     followersCount= user.followers_count   # Number of followers of a user
@@ -70,7 +70,7 @@ def userInfo(api,screen_name):
     description = user.description         # Bio of a user
     twitterDate= user.created_at            # Age on twitter
     today = datetime.today()
-    twitterAge=(today-twitterDate)
+    # twitterAge=(today.replace(tzinfo=None) -twitterDate)
     tweetData={}
     tweets = api.user_timeline(screen_name = screen_name,count=200)
     tweetsList = [tweet.text for tweet in tweets]
@@ -80,7 +80,7 @@ def userInfo(api,screen_name):
     tweetData['followers']=followersCount
     tweetData['tweet_count']= numberOfTweets
     tweetData['location']=location
-    tweetData['twitter_age']= str(twitterAge)+ 'days'
+    # tweetData['twitter_age']= str(twitterAge)+ 'days'
     tweetData['twitter_bio']= description
     tweetData['total_likes']= totalLikes
     
@@ -111,7 +111,7 @@ def multiProcessingTweets(tweet):
 
 #Sentiment Analysis of the data
 def twitterSentimentAnalysis(tweetData,tweetList):
-    print("starting snetiment analysis of tweets")
+    print("starting sentiment analysis of tweets")
     
     totalPositiveScore=0
     totalNegativeScore=0
@@ -137,7 +137,7 @@ def getTwitterData(username,analysis_data):
     
     if __name__ == "__main__":
         api=veryfyingUser()
-        tweetData,tweetList=userInfo(api,'mbcse50')
+        tweetData,tweetList=userInfo(api, username)
         positivityPercent,negativityPercent=twitterSentimentAnalysis(tweetData,tweetList)
 
         tweetData['positivityScore']=positivityPercent
@@ -146,8 +146,8 @@ def getTwitterData(username,analysis_data):
         analysis_data['twitter_data']=tweetData
         print(analysis_data)
         
-# x={'facebook':12}       
-# getTwitterData('mbcse50',x)
+x={'facebook':12}       
+getTwitterData('mbcse50',x)
         
     
 
