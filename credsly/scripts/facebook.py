@@ -41,28 +41,32 @@ def checkAndMakeDir(userID):
         os.makedirs("../userDataUploads/"+userID+"/facebook")
                  
 
-def getFriendsCount(path):
+def getFriendsCount(path, fb_dict):
     print("Starting Analysis Of Friend's Count...")
     try:
         f = open(path+"/friends_and_followers/friends.json",)
         data = json.load(f)
-        return len(data['friends_v2'])
+        fb_dict['totalFriends'] = len(data['friends_v2'])
+        #return len(data['friends_v2'])
     except Exception as e:
         print("while Getting Friends Count for Facebook"+e)
-        return None
+        fb_dict['totalFriends'] = None
+        #return None
     finally:    
         print("Analysis Of Friend's Count Completed")
        
 
-def getReceivedFriendRequestsCount(path):
+def getReceivedFriendRequestsCount(path, fb_dict):
     print("Starting Analysis Of Friend Request's...")
     try:
         f = open(path+"/friends_and_followers/friend_requests_received.json",)
         data = json.load(f)
-        return len(data['received_requests_v2'])
+        fb_dict['totalFriendRequestsRecieved'] = len(data['received_requests_v2'])
+        #return len(data['received_requests_v2'])
     except Exception as e:
         print("while Getting Friend Requests Count for Facebook"+e)
-        return None
+        fb_dict['totalFriendRequestsRecieved'] = None
+        #return None
     finally:    
         print("Analysis Of Friend Request's Completed")
 # def getGroupsDetails(path):
@@ -75,7 +79,7 @@ def getReceivedFriendRequestsCount(path):
 #         return None
 
 
-def getPageFollowedList(path, return_dict):
+def getPageFollowedList(path, sub_fb_dict):
     print("Starting Analysis Of Pages Followed...")
     try:
         f = open(path+"/pages/pages_you_follow.json",)
@@ -90,16 +94,18 @@ def getPageFollowedList(path, return_dict):
                         negativePages+=1 
             except Exception as e:
                 print(e)            
-        return_dict['n2']=negativePages
-        return_dict['t2']=totalPages
-        return (negativePages,totalPages)
+        sub_fb_dict['n2']=negativePages
+        sub_fb_dict['t2']=totalPages
+        #return (negativePages,totalPages)
     except Exception as e:
         print(e)
-        return None 
+        sub_fb_dict['n2'] = None
+        sub_fb_dict['t2'] = None
+        #return None 
     finally:      
         print("Analysis Of Pages Followed Completed")
 
-def getPageLikedList(path, return_dict):
+def getPageLikedList(path, sub_fb_dict):
     print("Starting Analysis Of Pages Liked...")
     try:
         f = open(path+"/pages/pages_you've_liked.json",)
@@ -116,39 +122,36 @@ def getPageLikedList(path, return_dict):
         #return data['page_likes_v2']
         # print(totalPages)
         # print(negativePages)
-        return_dict['n1']=negativePages
-        return_dict['t1']=totalPages
-        return (negativePages,totalPages)
+        sub_fb_dict['n1']=negativePages
+        sub_fb_dict['t1']=totalPages
+        #return (negativePages,totalPages)
     except Exception as e:
         print(e)
-        return None  
+        sub_fb_dict['n1'] = None
+        sub_fb_dict['t1'] = None
+        #return None  
     finally:    
         print("Analysis Of Pages Liked Completed")
 
-def getPageList(path):
+def getPageList(path,fb_dict):
     print("Starting Analysis Of Pages...")
     manager = multiprocessing.Manager()
-    return_dict = manager.dict()
-    p1 = multiprocessing.Process(target=getPageLikedList, args=(path,return_dict ))
-    p2 = multiprocessing.Process(target=getPageFollowedList, args=(path, return_dict))
-  
-    # starting process 1
+    sub_fb_dict = manager.dict()
+    p1 = multiprocessing.Process(target=getPageLikedList, args=(path,sub_fb_dict ))
+    p2 = multiprocessing.Process(target=getPageFollowedList, args=(path, sub_fb_dict))
     p1.start()
-    # starting process 2
     p2.start()
-  
-    # wait until process 1 is finished
     p1.join()
-    # wait until process 2 is finished
     p2.join()
     # n1,t1 = getPageLikedList(path)
     # n2,t2 = getPageFollowedList(path)  
-    print("Analysis Of Pages Completed")  
-    return (return_dict['n1']+return_dict['n2'])/(return_dict['t1']+return_dict['t2'])   
+    print("Analysis Of Pages Completed")
+    fb_dict['negativePageListPercentage'] = (sub_fb_dict['n1']+sub_fb_dict['n2'])/(sub_fb_dict['t1']+sub_fb_dict['t2'])
+    #return (sub_fb_dict['n1']+sub_fb_dict['n2'])/(sub_fb_dict['t1']+sub_fb_dict['t2'])   
     
 
 
-def getCommentsList(path):
+def getCommentsList(path, fb_dict):
     print("Starting Analysis Of Comments...")
     try:
         f = open(path+"/comments_and_reactions/comments.json",)
@@ -159,46 +162,50 @@ def getCommentsList(path):
         for post in data['comments_v2']:
             try:
                 for commentData in post['data']:
-                    print(commentData['comment']['comment'])
                     totalComments+=1
                     lang_response = text_analysis_client.detect_dominant_language(Text=commentData['comment']['comment'])
                     languages = lang_response['Languages']
                     lang_code = languages[0]['LanguageCode']
                     response = text_analysis_client.detect_sentiment(Text=commentData['comment']['comment'], LanguageCode=lang_code)
-                    print(response)
                     if(response['Sentiment']=='POSITIVE'):
                         positiveComments+=1
                     elif(response['Sentiment']=='NEGATIVE'):
                         negativeComments+=1
             except Exception as e:
                 print(e)
-
-        return positiveComments,negativeComments, totalComments
+        fb_dict['positiveComments'] = positiveComments
+        fb_dict['negativeComments'] = negativeComments
+        fb_dict['totalComments'] = totalComments
+        #return positiveComments,negativeComments, totalComments
 
     except Exception as e:
         print(e)
-        return None  
+        fb_dict['positiveComments'] = None
+        fb_dict['negativeComments'] = None
+        fb_dict['totalComments'] = None
+        #return None  
     finally:
         print("Analysis Of Comments Completed")
     
                        
 
-def getPostsInteractionsCount(path):
+def getPostsInteractionsCount(path, fb_dict):
     ## Likes Count
     print("Starting Analysis Of Posts...")
     try:
         f = open(path+"/comments_and_reactions/posts_and_comments.json",)
         data = json.load(f)
-        print(data)
-        return len(data['reactions_v2'])
+        fb_dict['totalReactionsOnPost'] = len(data['reactions_v2'])
+        #return len(data['reactions_v2'])
     except Exception as e:
         print(e)
-        return None    
+        fb_dict['totalReactionsOnPost'] = None
+        #return None    
     finally:
         print("Analysis Of Posts Completed")
 
 
-def getProfileInfo(path):
+def getProfileInfo(path, fb_dict):
     print("Starting Analysis Of Profile...")
     try:
         f = open(path+"/profile_information/profile_information.json",)
@@ -226,21 +233,22 @@ def getProfileInfo(path):
         totalGroups = 0
         negativeGroups = 0
         for grp in data['groups']:
-            print(grp['name'])
             totalGroups+=1
             if(client1.contains_profanity(grp['name'])):      #Checks for Bad words
                 negativeGroups+=1
         profileInfo['negativeGroupPercentage'] = negativeGroups/totalGroups     
 
-        return profileInfo
+        fb_dict['profileInfo'] = profileInfo
+        #return profileInfo
 
     except Exception as e:
         print(e)
-        return None
+        fb_dict['profileInfo'] = None
+        #return None
     finally:
         print("Analysis Of Profile Completed") 
 
-def getImageSentimentInfo(path):
+def getImageSentimentInfo(path, fb_dict):
     print("Starting Analysis Of Images Uploaded...") 
     try:
         extensions = ['*.gif', '*.png', '*.jpg', '*.jpeg']
@@ -258,10 +266,12 @@ def getImageSentimentInfo(path):
                 )
                 if(len(response['ModerationLabels'])>0):
                     negativeImages+=1
-        return (negativeImages/totalImages)   
+        fb_dict['totalNegativeImagesPercentage'] = (negativeImages/totalImages)           
+        #return (negativeImages/totalImages)   
     except Exception as e:
         print(e)
-        return None
+        fb_dict['totalNegativeImagesPercentage'] = None
+        #return None
     finally:
         print("Analysis Of Images Completed")
 
@@ -273,12 +283,41 @@ def getFacebookData(zipName, userID):
     # with ZipFile(file_name, 'r') as zip:
     #     # extracting all the files
     #     zip.extractall(path)
-    totalFriends = getFriendsCount(path)
-    totalFriendRequestRecieved = getReceivedFriendRequestsCount(path)
-    negativePageListPercentage = getPageList(path)
-    positiveComments,negativeComments, totalComments = getCommentsList(path)
-    totalReactionsOnPost = getPostsInteractionsCount(path) #Likes and Comments
-    totalNegativeImagesPercentage = getImageSentimentInfo(path)
-    profileInfo = getProfileInfo(path)
 
-print(getPageList(path))
+    manager = multiprocessing.Manager()
+    fb_dict = manager.dict()
+    p1 = multiprocessing.Process(target=getFriendsCount, args=(path,fb_dict ))
+    p2 = multiprocessing.Process(target=getReceivedFriendRequestsCount, args=(path, fb_dict))
+    p3 = multiprocessing.Process(target=getPageList, args=(path, fb_dict))
+    p4 = multiprocessing.Process(target=getCommentsList, args=(path, fb_dict))
+    p5 = multiprocessing.Process(target=getPostsInteractionsCount, args=(path, fb_dict))
+    p6 = multiprocessing.Process(target=getImageSentimentInfo, args=(path, fb_dict))
+    p7 = multiprocessing.Process(target=getProfileInfo, args=(path, fb_dict))
+
+    p1.start()
+    p2.start()
+    p3.start()
+    p4.start()
+    p5.start()
+    p6.start()
+    p7.start()
+
+    p1.join()
+    p2.join()
+    p3.join()
+    p4.join()
+    p5.join()
+    p6.join()
+    p7.join()
+    print(fb_dict)
+    return fb_dict
+    # totalFriends = getFriendsCount(path)
+    # totalFriendRequestsRecieved =getReceivedFriendRequestsCount(path)
+    # negativePageListPercentage = getPageList(path)
+    # positiveComments,negativeComments, totalComments = getCommentsList(path)
+    # totalReactionsOnPost = getPostsInteractionsCount(path) #Likes and Comments
+    # totalNegativeImagesPercentage = getImageSentimentInfo(path)
+    # profileInfo = getProfileInfo(path)
+    # analysis_data['facebook']=fb_dict
+
+print(getFacebookData(path,"asdads"))
