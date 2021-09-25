@@ -12,8 +12,10 @@ import pandas as pd
 from purgo_malum import client as client1
 import csv
 import boto3
+import multiprocessing
 
 
+#................................................................................................................................................................................#
 
 
 #Twitter credentials
@@ -34,8 +36,11 @@ client = boto3.client(
     region_name = 'us-west-2'
 )
 
+#................................................................................................................................................................................#
+
+
 # Authenticate to Twitter
-def veryfyingUser(return_dict):
+def veryfyingUser():
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret )
     auth.set_access_token(access_token,access_token_secret)
     api = tweepy.API(auth)
@@ -43,19 +48,22 @@ def veryfyingUser(return_dict):
     try:
         api.verify_credentials()
         print("Authentication OK")
+         
+    
     except:
         print("Error during authentication")
 
-    return_dict['api']=api
-#api= veryfyingUser()
+    return api
 
 
+#................................................................................................................................................................................#
 
 
 #Getting other informations of a user
-def userInfo(api,screen_name,return_dict):
+def userInfo(api,screen_name):
     user=api.get_user(screen_name)  # fetching the user
     id= user.id_str
+    
     followersCount= user.followers_count   # Number of followers of a user
     numberOfTweets = user.statuses_count   # Number of tweets by users
     location = user.location              # Location of a user if mentioned
@@ -75,38 +83,74 @@ def userInfo(api,screen_name,return_dict):
     tweetData['twitter_age']= str(twitterAge)+ 'days'
     tweetData['twitter_bio']= description
     tweetData['total_likes']= totalLikes
-    tweetData['tweets']= tweetsList
     
-    return_dict['tweetData']=tweetData
-#tweetData=userInfo(api,'mbcse50')
+    return tweetData,tweetsList
+    
+#................................................................................................................................................................................#
 
-#Sentiment Analysis of the data
-def twitterSentimentAnalysis(tweetData):
-    
+
+
+def multiProcessingTweets(tweet):
     positiveScore=0
     negativeScore=0
+    lang_response = client.detect_dominant_language(Text=tweet)
+    languages = lang_response['Languages']
+    lang_code = languages[0]['LanguageCode']
+
+    response = client.detect_sentiment(
+                Text=tweet, LanguageCode=lang_code)
     
-    for i in range (len(tweetData['tweets'])):
-        lang_response = client.detect_dominant_language(Text=tweetData['tweets'][i])
-        languages = lang_response['Languages']
-        lang_code = languages[0]['LanguageCode']
-
-        response = client.detect_sentiment(
-                    Text=tweetData['tweets'][i], LanguageCode=lang_code)
+    
+    if(response['Sentiment']=='POSITIVE'):
+        positiveScore+=1
+    elif(response['Sentiment']=='NEGATIVE'):
+        negativeScore+=1
         
-        
-        if(response['Sentiment']=='POSITIVE'):
-            positiveScore+=1
-        elif(response['Sentiment']=='NEGATIVE'):
-            negativeScore+=1
+    return positiveScore,negativeScore
 
-    positivityPercent= (positiveScore/tweetData['tweet_count'])*100
-    negativityPercent= (negativeScore/tweetData['tweet_count'])*100
+
+#Sentiment Analysis of the data
+def twitterSentimentAnalysis(tweetData,tweetList):
+    print("starting snetiment analysis of tweets")
+    
+    totalPositiveScore=0
+    totalNegativeScore=0
+    
+    p = multiprocessing.Pool()
+    result = p.map(multiProcessingTweets, tweetList)
+        
+    for r in result:
+        totalPositiveScore+=r[0]
+        totalNegativeScore+=r[1]
+    positivityPercent= (totalPositiveScore/tweetData['tweet_count'])*100
+    negativityPercent= (totalNegativeScore/tweetData['tweet_count'])*100
+    
+    print("sentiment analysis done!!!")
     return positivityPercent,negativityPercent
-positivityPercent,negativityPercent= twitterSentimentAnalysis(tweetData)
-print(positivityPercent,negativityPercent)
 
 
-# if(client1.contains_profanity('You are an @a$$hole')):      #Checks for Bad words
-#     print(True)
 
+#................................................................................................................................................................................#
+
+
+def getTwitterData(username,analysis_data):
+    
+    if __name__ == "__main__":
+        api=veryfyingUser()
+        tweetData,tweetList=userInfo(api,'mbcse50')
+        positivityPercent,negativityPercent=twitterSentimentAnalysis(tweetData,tweetList)
+
+        tweetData['positivityScore']=positivityPercent
+        tweetData['negativityScore']=negativityPercent
+        
+        analysis_data['twitter_data']=tweetData
+        print(analysis_data)
+        
+# x={'facebook':12}       
+# getTwitterData('mbcse50',x)
+        
+    
+
+#................................................................................................................................................................................#
+
+    
