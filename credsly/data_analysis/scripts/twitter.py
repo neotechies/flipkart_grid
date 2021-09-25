@@ -14,7 +14,6 @@ import csv
 import boto3
 import multiprocessing
 
-
 #................................................................................................................................................................................#
 
 
@@ -134,21 +133,20 @@ def twitterSentimentAnalysis(tweetData,tweetList):
 
 
 def getTwitterData(username,analysis_data):
-    
-    if __name__ == "__main__":
-        api=veryfyingUser()
-        tweetData,tweetList=userInfo(api, username)
-        positivityPercent,negativityPercent=twitterSentimentAnalysis(tweetData,tweetList)
+    print("STARTING TWITTER DATA ANALYSIS")
 
-        tweetData['positivityScore']=positivityPercent
-        tweetData['negativityScore']=negativityPercent
-        
-        analysis_data['twitter_data']=tweetData
-        print(analysis_data)
-        
-x={'facebook':12}       
-getTwitterData('mbcse50',x)
-        
+    
+    api=veryfyingUser()
+    tweetData,tweetList=userInfo(api, username)
+    positivityPercent,negativityPercent=twitterSentimentAnalysis(tweetData,tweetList)
+
+    tweetData['positivityScore']=positivityPercent
+    tweetData['negativityScore']=negativityPercent
+    
+    analysis_data['twitter_data']=tweetData.copy()
+    # print(analysis_data)
+    print("TWITTER DATA ANALYSIS COMPLETED")
+    
     
 
 #................................................................................................................................................................................#

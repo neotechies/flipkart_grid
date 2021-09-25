@@ -6,6 +6,9 @@ import boto3
 import glob
 from purgo_malum import client as client1
 import multiprocessing
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 ########################################################Configuration Keys#######################################################################################
 
@@ -340,12 +343,13 @@ def getImageSentimentInfo(path, fb_dict):
 #*******************************
 
 def getFacebookData(zipName, userID, analysis_data):
+    print("STARTING FACEBOOK DATA ANALYSIS")
     # checkAndMakeDir(userID)
-    # path="../userDataUploads/"+userID+"/facebook"
+    path=str(BASE_DIR)+"/userDataUploads/"+userID+"/facebook"
+    filename=str(BASE_DIR)+"/userDataUploads/ZIP_UPLOADS/"+zipName
     # with ZipFile(file_name, 'r') as zip:
     #     # extracting all the files
     #     zip.extractall(path)
-
     manager = multiprocessing.Manager()
     fb_dict = manager.dict()
     p1 = multiprocessing.Process(target=getFriendsCount, args=(path,fb_dict ))
@@ -372,6 +376,7 @@ def getFacebookData(zipName, userID, analysis_data):
     p6.join()
     p7.join()
     analysis_data['facebook_data']=fb_dict.copy()
+    print("FACEBOOK DATA ANALYSIS COMPLETED")
     # totalFriends = getFriendsCount(path)
     # totalFriendRequestsRecieved =getReceivedFriendRequestsCount(path)
     # negativePageListPercentage = getPageList(path)

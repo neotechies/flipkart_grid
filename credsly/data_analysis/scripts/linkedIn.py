@@ -6,7 +6,9 @@ import pandas as pd
 import boto3
 import base64
 import multiprocessing
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 #................................................................................................................................................................................#
 #AWS client credentials
 
@@ -154,10 +156,12 @@ def getTotalConnections(path,linkedIn_dict):
         
 
 def getlinkedInData(zipName,userID,analysis_data):
-    checkAndMakeDir(userID)
-    path="../userDataUploads/"+userID+"/linkedIn"
+    print("STARTING LINKEDIN DATA ANALYSIS")
 
-    with ZipFile(zipName, 'r') as zip:
+    checkAndMakeDir(userID)
+    path=str(BASE_DIR)+"/userDataUploads/"+userID+"/linkedIn"
+    filename = str(BASE_DIR)+"/userDataUploads/ZIP_UPLOADS/"+zipName
+    with ZipFile(filename, 'r') as zip:
         # extracting all the files
         
         zip.extractall(path)
@@ -185,6 +189,8 @@ def getlinkedInData(zipName,userID,analysis_data):
     p5.join()
       
     analysis_data['linkedIn_data']=linkedIn_dict.copy()
+    print("LINKEDIN DATA ANALYSIS COMPLETED")
+
     # linkedInData={}
     
     # profileJson=getProfileInfo(path) 
@@ -203,10 +209,5 @@ def getlinkedInData(zipName,userID,analysis_data):
 # if __name__ == '__main__':
 #     linkedInData=getlinkedInData(file_name,'avinash')
 #     print(linkedInData)
-
-analysis_data={}
-linkedInData=getlinkedInData("../userDataUploads/linkedin-mbcse50.zip",'mohit1234',analysis_data )
-print(analysis_data)
-
 
 #................................................................................................................................................................................#
