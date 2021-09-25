@@ -35,7 +35,7 @@ client = boto3.client(
 )
 
 # Authenticate to Twitter
-def veryfyingUser():
+def veryfyingUser(return_dict):
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret )
     auth.set_access_token(access_token,access_token_secret)
     api = tweepy.API(auth)
@@ -46,14 +46,14 @@ def veryfyingUser():
     except:
         print("Error during authentication")
 
-    return api
-api= veryfyingUser()
+    return_dict['api']=api
+#api= veryfyingUser()
 
 
 
 
 #Getting other informations of a user
-def userInfo(api,screen_name):
+def userInfo(api,screen_name,return_dict):
     user=api.get_user(screen_name)  # fetching the user
     id= user.id_str
     followersCount= user.followers_count   # Number of followers of a user
@@ -76,13 +76,16 @@ def userInfo(api,screen_name):
     tweetData['twitter_bio']= description
     tweetData['total_likes']= totalLikes
     tweetData['tweets']= tweetsList
-    return tweetData
-tweetData=userInfo(api,'mbcse50')
+    
+    return_dict['tweetData']=tweetData
+#tweetData=userInfo(api,'mbcse50')
 
 #Sentiment Analysis of the data
 def twitterSentimentAnalysis(tweetData):
+    
     positiveScore=0
     negativeScore=0
+    
     for i in range (len(tweetData['tweets'])):
         lang_response = client.detect_dominant_language(Text=tweetData['tweets'][i])
         languages = lang_response['Languages']
