@@ -18,4 +18,3 @@
 # Team
 - Mohit Bhat
 - Avinash Kumar
-- Aditya Singh
