@@ -24,10 +24,11 @@ client = boto3.client(
 #................................................................................................................................................................................#
 
 
-file_name = "../userDataUploads/linkedInData.zip"  #testing
-userID='avinash'
-path="../userDataUploads/"+userID+"/linkedIn" #testing
+# file_name = "../userDataUploads/linkedInData.zip"  #testing
+# userID='avinash'
+# path="../userDataUploads/"+userID+"/linkedIn" #testing
 
+#................................................................................................................................................................................#
 def checkAndMakeDir(userID):
     if(os.path.isdir("../userDataUploads/"+userID)):
         if(os.path.isdir("../userDataUploads/"+userID+"/linkedIn")):
@@ -49,7 +50,7 @@ def getProfileInfo(path,linkedIn_dict):
         filePath=path+'/Profile.csv'
         data=pd.read_csv(filePath,error_bad_lines=False)
         profileJson=data.to_json(orient = 'records')[1:-1].replace('},{', '} {')
-        linkedIn_dict['profileJson']=profileJson
+        linkedIn_dict['profileJson']=json.loads(profileJson)
         # return profileJson
             
     except Exception as e:
@@ -70,7 +71,7 @@ def getEmail(path,linkedIn_dict):
         filePath=path+'/Email Addresses.csv'
         data=pd.read_csv(filePath,error_bad_lines=False)
         emailJson=data.to_json(orient = 'records')[1:-1].replace('},{', '} {')
-        linkedIn_dict['email']=emailJson
+        linkedIn_dict['email']=json.loads(emailJson)["Email Address"]
         # return emailJson
     except Exception as e:
         print(e)
@@ -153,13 +154,13 @@ def getTotalConnections(path,linkedIn_dict):
         
 
 def getlinkedInData(zipName,userID,analysis_data):
-    # checkAndMakeDir(userID)
-    # path="../userDataUploads/"+userID+"/linkedIn"
+    checkAndMakeDir(userID)
+    path="../userDataUploads/"+userID+"/linkedIn"
 
-    # with ZipFile(file_name, 'r') as zip:
-    #     # extracting all the files
+    with ZipFile(zipName, 'r') as zip:
+        # extracting all the files
         
-    #     zip.extractall(path)
+        zip.extractall(path)
     
     manager = multiprocessing.Manager()
     linkedIn_dict = manager.dict()
@@ -183,7 +184,7 @@ def getlinkedInData(zipName,userID,analysis_data):
     p4.join()
     p5.join()
       
-    analysis_data['linkedIn_data']=linkedIn_dict
+    analysis_data['linkedIn_data']=linkedIn_dict.copy()
     # linkedInData={}
     
     # profileJson=getProfileInfo(path) 
@@ -203,7 +204,9 @@ def getlinkedInData(zipName,userID,analysis_data):
 #     linkedInData=getlinkedInData(file_name,'avinash')
 #     print(linkedInData)
 
-
+analysis_data={}
+linkedInData=getlinkedInData("../userDataUploads/linkedin-mbcse50.zip",'mohit1234',analysis_data )
+print(analysis_data)
 
 
 #................................................................................................................................................................................#
