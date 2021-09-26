@@ -54,7 +54,8 @@ def register(request):
 def dashboard(request):
     print(request.user.is_authenticated)
     print(request.user)
-    user_details=User
+    user_details=User.objects.filter(username=request.user).all()
+    print(user_details)
     return render(request,'dashboard.html')
 
 def privacy(request):

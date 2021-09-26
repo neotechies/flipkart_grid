@@ -1,6 +1,10 @@
 from django.urls import path
-
+from django.contrib import admin
 from . import views
+
+admin.site.site_header="CredSly Admin"
+admin.site.site_title="CredSly Admin Panel"
+admin.site.index_title="Welcome to CredSly Admin Panel"
 
 urlpatterns = [
     path('', views.index, name='index'),
