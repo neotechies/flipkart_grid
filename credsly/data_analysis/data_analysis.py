@@ -22,7 +22,6 @@ def generate_credit_score(twitter_username, fb_zipname, linkedin_zipname, userID
         data_table=generate_table(analysis_data)
         table_form=pd.DataFrame(data_table)
         
-        credit_score=0
         
         
 
@@ -197,10 +196,8 @@ table_form=pd.DataFrame(data_table)
                 
             
 def credit_assignment(x):   #pass table_form as argument
-    
 
     credit_score=0
-
     priority_one_score=100
     priority_two_score=80
     priority_three_score=50
@@ -243,10 +240,7 @@ def credit_assignment(x):   #pass table_form as argument
 
     return credit_score
      
-                
-        
-                
-        
+
                 
                  
                         
