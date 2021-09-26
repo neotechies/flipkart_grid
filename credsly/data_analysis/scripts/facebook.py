@@ -267,8 +267,8 @@ def getPostsList(path, fb_dict):
                 positivePosts+=r[0]
                 negativePosts+=r[1]
                 totalPosts+=r[2]          
-        fb_dict['positivePosts'] = positivePosts
-        fb_dict['negativePosts'] = negativePosts
+        fb_dict['positivePosts'] = positivePosts/totalPosts
+        fb_dict['negativePosts'] = negativePosts/totalPosts
         fb_dict['totalPosts'] = totalPosts
         # return positiveComments,negativeComments, totalComments
 
