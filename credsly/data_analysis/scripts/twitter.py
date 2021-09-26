@@ -68,7 +68,7 @@ def userInfo(api,screen_name):
     location = user.location              # Location of a user if mentioned
     description = user.description         # Bio of a user
     twitterDate= user.created_at            # Age on twitter
-    delta = datetime.utcnow() - twitterDate
+    delta = datetime.utcnow() - twitterDate.utcnow()
     twitterAge=delta.days
     tweetData={}
     tweets = api.user_timeline(screen_name = screen_name,count=200)
@@ -79,15 +79,14 @@ def userInfo(api,screen_name):
     tweetData['followers']=followersCount
     tweetData['tweet_count']= numberOfTweets
     tweetData['location']=location
-    # tweetData['twitter_age']= str(twitterAge)+ 'days'
+    tweetData['twitter_age']= str(twitterAge)+ 'days'
     tweetData['twitter_bio']= description
     tweetData['total_likes']= totalLikes
-    
- #   return tweetData,tweetsList
+    return tweetData,tweetsList
     
 #................................................................................................................................................................................#
-api=veryfyingUser()
-userInfo(api,'mbcse50')
+# api=veryfyingUser()
+# userInfo(api,'mbcse50')
 
 
 def multiProcessingTweets(tweet):
