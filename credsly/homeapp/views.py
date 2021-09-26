@@ -12,6 +12,26 @@ def index(request):
 def signin(request):
     return render(request,'sign-in.html')
 
+def loginuser(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        user =User.objects.get(email=email)
+        print(user)
+        user = authenticate(request, username=user, password=password)
+        if user is not None:
+            login(request,user)
+            return redirect('dashboard')
+        else:
+            messages.error(request, f'Wrong Email or Password')
+            return redirect('signin')
+    else:
+        messages.error(request, f'BAD Request')
+        return redirect('signin')
+
+
+
+
 def signup(request):
     return render(request,'sign-up.html')
 
@@ -32,6 +52,9 @@ def register(request):
         return redirect('signup')
 
 def dashboard(request):
+    print(request.user.is_authenticated)
+    print(request.user)
+    user_details=User
     return render(request,'dashboard.html')
 
 def privacy(request):
