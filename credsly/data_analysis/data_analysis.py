@@ -223,7 +223,7 @@ def credit_assignment(x):   #pass table_form as argument
         credit_score+=priority_three_score- (x['total_skills'][0]/(25-x['total_skills'][0]))
 
     invitationPercent=(x['incoming_invitations'][0]/x['total_connections'][0])
-    credit_score+= (invitation_percent*priority_three_score)
+    credit_score+= (invitationPercent*priority_three_score)
 
     likePercent= (x['total_likes'][0]/x['total_posts'][0])
     credit_score+= (likePercent*priority_three_score)
