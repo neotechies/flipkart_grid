@@ -130,4 +130,3 @@ dmypy.json
 .Pipfile.lock
 .*
 credsly/userDataUploads/*
-./scripts/.DS_Store
