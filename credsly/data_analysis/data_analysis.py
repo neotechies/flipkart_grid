@@ -17,16 +17,28 @@ def generate_credit_score(twitter_username, fb_zipname, linkedin_zipname, userID
         p1.join()
         p2.join()
         p3.join()
-        print(analysis_data)
+        #print(analysis_data)
         # print(json.dumps(analysis_data,sort_keys=False, indent=2))
+        data_table=generate_table(analysis_data)
+        table_form=pd.DataFrame(data_table)
+        
+        credit_score=0
+        
+        
 
 generate_credit_score("mbcse50","asda","linkedin-mbcse50.zip","mohit1234")
 
 
-def generate_sub_credit_score(analysis_data):
+
+
+def generate_table(analysis_data):
         
-        data_table = pd.DataFrame(columns=['name', 'email', 'location','age','education','total_skills','total_connections','incoming_invitations','total_posts','total_likes','positive_posts_score','negative_posts_score','negative_image_score','comments_analysis_score','positive_page_score','negative_page_score','negative_groups'])
-        full_name= analysis_data['linkedIn_data']['First Name']+" "+ analysis_data['linkedIn_data']['Last Name']
+        data_table = pd.DataFrame(columns=['name', 'email', 'location','age','education',
+                                           'total_skills','total_connections','incoming_invitations',
+                                           'total_posts','total_likes','positive_posts_score','negative_posts_score',
+                                           'negative_image_score','comments_analysis_score','positive_page_score','negative_page_score',
+                                           'negative_groups','social_interaction'])
+        full_name= analysis_data['linkedIn_data']['profileJson']['First Name']+" "+ analysis_data['linkedIn_data']['profileJson']['Last Name']
         
         #Fetching email row
         email=None
@@ -74,7 +86,7 @@ def generate_sub_credit_score(analysis_data):
         if(analysis_data['twitter_data']['followers']!=None):
                 twitter_connections= analysis_data['twitter_data']['followers']
                 
-        if(analysis_data['c']['totalFriends']!=None):
+        if(analysis_data['facebook_data']['totalFriends']!=None):
                 fb_connections= analysis_data['facebook_data']['totalFriends']
         total_connections= int((linkedIn_connections+twitter_connections+fb_connections)/3)     #Average of all three social media connections
         
@@ -92,30 +104,42 @@ def generate_sub_credit_score(analysis_data):
         tweetNums=0
         if(analysis_data['twitter_data']['tweet_count']!=None):
                 tweetNums= analysis_data['twitter_data']['tweet_count']
-        if(analysis_data['facebook_data']['fb_posts']!=None):
-                fb_posts= analysis_data['facebook_data']['fb_posts']
+        if(analysis_data['facebook_data']['totalPosts']!=None):
+                fb_posts= analysis_data['facebook_data']['totalPosts']
                 
         
         total_posts= int((tweetNums+fb_posts)/2)
         
         # Getting total likes on posts
         twitter_likes=0
-        fb_likes=0
+        
         if(analysis_data['twitter_data']['total_likes']!=None):
                 twitter_likes=analysis_data['twitter_data']['total_likes']
+        
+        total_likes= twitter_likes
+        
+        #Fetching facebook reactions on posts
+        fb_likes=0
         if(analysis_data['facebook_data']['totalReactionsOnPost']!=None):
                 fb_likes= analysis_data['facebook_data']['totalReactionsOnPost']
-        total_likes= int((twitter_likes+fb_likes)/2)
         
         #fetching the positive post score
         twitter_positive=0
+        fb_positive=0
         if(analysis_data['twitter_data']['positivityScore']!=None):
                 twitter_positive=analysis_data['twitter_data']['positivityScore']
+        if(analysis_data['facebook_data']['positivePosts']!=None):
+                fb_positive= analysis_data['facebook_data']['positivePosts']
+        post_positive=(twitter_positive+fb_positive)/2
         
         #Fetching the negative post score
         twitter_negative=0
+        fb_negative=0
         if(analysis_data['twitter_data']['positivityScore']!=None):
                 twitter_negative=analysis_data['twitter_data']['negativityScore']
+        if(analysis_data['facebook_data']['negativePosts']!=None):
+                fb_negative= analysis_data['facebook_data']['negativePosts']
+        post_negative=(twitter_positive+fb_negative)/2
         
         # Fetching image analysis score
         negative_image_score=0
@@ -131,6 +155,34 @@ def generate_sub_credit_score(analysis_data):
         #Fetching the Negative comments score
         if(analysis_data['facebook_data']['negativeComments']!=None):
                 negative_comments=analysis_data['facebook_data']['negativeComments']   
+        
+        #Fetching the negative group score
+        negative_group=0  
+        if(analysis_data['facebook_data']['profileInfo']['negativeGroupPercentage']!=None):
+                negative_group= analysis_data['facebook_data']['profileInfo']['negativeGroupPercentage']
+        
+        #Fetching the negative groups
+        negative_page=0
+        if(analysis_data['facebook_data']['negativePageListPercentage']!=None):
+                negative_page=analysis_data['facebook_data']['negativePageListPercentage']
+                
+        
+        
+        data_table = data_table.append({'name':full_name, 'email':email, 'location':location,'age':age,'education':education_detail,
+                                           'total_skills':skills,'total_connections':total_connections,'incoming_invitations':incoming_connections,
+                                           'total_posts':total_posts,'total_likes':total_likes,'positive_posts_score':post_positive,'negative_posts_score':post_negative,
+                                           'negative_image_score':negative_image_score,'comments_analysis_score':negative_comments,'positive_page_score':positive_comments,'negative_page_score':negative_page,
+                                           'negative_groups':negative_group,'social_interaction':fb_likes}, ignore_index=True)
+                
+                
+        
+        return data_table
+
+
+data_table=generate_table(analysis_data)
+table_form=pd.DataFrame(data_table)
+     
+                
                 
             
         
