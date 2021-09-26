@@ -13,13 +13,13 @@
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  {% load static %}
   <link rel="apple-touch-icon" sizes="76x76" href="{% static 'assets/img/apple-icon.png' %}">
   <link rel="icon" type="image/png" href="{% static 'assets/img/favicon.png' %}">
   <title>
@@ -94,7 +94,9 @@
             <li class="nav-item d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
                 <i class="fa fa-user me-sm-1"></i>
-                <span class="d-sm-inline d-none">Sign In</span>
+                <span class="d-sm-inline d-none">{{userDetails.first_name}} {{userDetails.last_name}}</span>&nbsp;
+                <i class="fa fa-sign-out me-sm-1"></i>
+                <span class="d-sm-inline d-none"><a href="/logout">Logout</a></span>
               </a>
             </li>
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -131,7 +133,7 @@
                   <div class="numbers">
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Posts</p>
                     <h5 class="font-weight-bolder mb-0">
-                      0
+                      {{ userDetails.total_posts }}
                       <!-- <span class="text-success text-sm font-weight-bolder">+55%</span> -->
                     </h5>
                   </div>
@@ -153,7 +155,7 @@
                   <div class="numbers">
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Friends</p>
                     <h5 class="font-weight-bolder mb-0">
-                      0
+                      {{ userDetails.total_friends }}
                       <!-- <span class="text-success text-sm font-weight-bolder">+3%</span> -->
                     </h5>
                   </div>
@@ -175,7 +177,7 @@
                   <div class="numbers">
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Likes</p>
                     <h5 class="font-weight-bolder mb-0">
-                      0
+                      {{ userDetails.total_likes }}
                       <!-- <span class="text-danger text-sm font-weight-bolder">-2%</span> -->
                     </h5>
                   </div>
@@ -197,7 +199,7 @@
                   <div class="numbers">
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Total comments</p>
                     <h5 class="font-weight-bolder mb-0">
-                      0
+                      {{ userDetails.total_comments }}
                       <!-- <span class="text-success text-sm font-weight-bolder">+5%</span> -->
                     </h5>
                   </div>
@@ -221,7 +223,8 @@
                   <div class="d-flex flex-column h-100">
                     <p class="mb-1 pt-2 text-bold">Generate Credit Score</p>
                     <h6 class="font-weight-bolder">Connect Twitter</h6>
-                    <button>Upload Data</button>
+                    <p>Last Entered: {{ userDetails.twitter_username}}</p>
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#twitter_upload_model">Enter Username</button>
                   </div>
                 </div>
                 <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
@@ -242,7 +245,8 @@
                   <div class="d-flex flex-column h-100">
                     <p class="mb-1 pt-2 text-bold">Generate Credit Score</p>
                     <h6 class="font-weight-bolder">Connect Facebook</h6>
-                    <button>Upload Data</button>
+                    <p style="font-size: 8.5px;">Last Upload: {{ userDetails.facebook_zipname}}</p>
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#fb_upload_model">Upload Data</button>
                   </div>
                 </div>
                 <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
@@ -263,7 +267,8 @@
                   <div class="d-flex flex-column h-100">
                     <p class="mb-1 pt-2 text-bold">Generate Credit Score</p>
                     <h6 class="font-weight-bolder">Connect LinkedIn</h6>
-                    <button>Upload Data</button>
+                    <p style="font-size: 8.5px;">Last Upload: {{ userDetails.linkedin_zipname}}</p>
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#linkedin_upload_model">Upload Data</button>
                   </div>
                 </div>
                 <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
@@ -286,7 +291,8 @@
                   <div class="d-flex flex-column h-100">
                     <p class="mb-1 pt-2 text-bold">Social Credit Scoring System</p>
                     <h5 class="font-weight-bolder">Your Credit Score</h5>
-                    <h1>60</h1>
+                    <h1>{{ userDetails.credit_score }}</h1>
+                    <button class="btn btn-success">Generate</button>
                     <p>Improve your social media Presence to make it better</p>
                   </div>
                 </div>
@@ -336,7 +342,7 @@
                       </div>
                       <p class="text-xs mt-1 mb-0 font-weight-bold">Followers</p>
                     </div>
-                    <h4 class="font-weight-bolder">36K</h4>
+                    <h4 class="font-weight-bolder">30K</h4>
                     <div class="progress w-75">
                       <div class="progress-bar bg-dark w-60" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
@@ -527,6 +533,72 @@
       </div>
     </div>
   </div>
+
+<!--************************************************Modals***********************************************************************************-->
+  <div class="modal fade" id="fb_upload_model" tabindex="-1" aria-labelledby="fb_upload_label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="fb_upload_label">Upload Your Facebook Data Zip File</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/fbzipupload" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="fbzip" class="form-control"><br>
+            <button type="submit" class="btn btn-success">Upload</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!---->
+<div class="modal fade" id="linkedin_upload_model" tabindex="-1" aria-labelledby="linkedin_upload_label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="linkedin_upload_label">Upload Your Linkedin Data Zip File</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/linkedinzipupload" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="file" name="linkedinzip" class="form-control"><br>
+          <button type="submit" class="btn btn-success">Upload</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--------------------->
+<div class="modal fade" id="twitter_upload_model" tabindex="-1" aria-labelledby="twitter_upload_label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="twitter_upload_label">Input Your Twitter Username</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/twitterusernameupload" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="text" name="twitter_username" class="form-control"><br>
+          <button type="submit" class="btn btn-success">Submit</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!------------------------------------------------------------------------------------------------------------------------------------->
   <!--   Core JS Files   -->
   <script src="{% static 'assets/js/core/popper.min.js' %}"></script>
   <script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>

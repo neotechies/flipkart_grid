@@ -138,3 +138,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 AUTH_USER_MODEL = 'homeapp.User'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "userDataUploads/ZIP_UPLOADS"

@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.core.files.storage import FileSystemStorage
 User=get_user_model()
 import uuid
 
@@ -10,7 +11,10 @@ def index(request):
     return render(request,'index.html')
 
 def signin(request):
-    return render(request,'sign-in.html')
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    else:    
+        return render(request,'sign-in.html')
 
 def loginuser(request):
     if request.method == 'POST':
@@ -52,11 +56,60 @@ def register(request):
         return redirect('signup')
 
 def dashboard(request):
-    print(request.user.is_authenticated)
-    print(request.user)
-    user_details=User.objects.filter(username=request.user).all()
-    print(user_details)
-    return render(request,'dashboard.html')
+    if(request.user.is_authenticated):
+        user_details=User.objects.get(username=request.user)
+        return render(request,'dashboard.html',{"userDetails" : user_details})
+    return redirect('signin')    
 
 def privacy(request):
     return render(request,'privacy_policy.html')    
+
+def logoutuser(request):
+    if request.user.is_authenticated:
+        logout(request)
+        return redirect('signin')
+    else:
+        return redirect('signin')  
+
+     
+def uploadFacebookZip(request):
+        if request.method == 'POST' and request.user.is_authenticated: 
+            fs= FileSystemStorage() 
+            fs.save(str(request.user.username)+"-facebook.zip",request.FILES['fbzip'])
+            userdata = User.objects.get(username=request.user)
+            userdata.facebook_zipname=userdata.username+"-facebook.zip"
+            userdata.save()
+            messages.success(request, f'File uploaded Successfully')
+            return redirect('dashboard')
+        else:
+            messages.error(request, f'BAD Request')
+            return redirect('dashboard')   
+
+def uploadLinkedinZip(request):
+        if request.method == 'POST' and request.user.is_authenticated: 
+            fs= FileSystemStorage() 
+            fs.save(str(request.user.username)+"-linkedin.zip",request.FILES['linkedinzip'])
+            userdata = User.objects.get(username=request.user)
+            userdata.linkedin_zipname=userdata.username+"-linkedin.zip"
+            userdata.save()
+            messages.success(request, f'File uploaded Successfully')
+            return redirect('dashboard')
+        else:
+            messages.error(request, f'BAD Request')
+            return redirect('dashboard')   
+
+def uploadTwitterUsername(request):
+        if request.method == 'POST' and request.user.is_authenticated: 
+            username = request.POST['twitter_username']
+            if username is not None or username !="":
+                userdata = User.objects.get(username=request.user)
+                userdata.twitter_username=username
+                userdata.save()
+                messages.success(request, f'File uploaded Successfully')
+                return redirect('dashboard')
+            else:
+                messages.error(request, f'Please Enter Twitter Username')
+                return redirect('dashboard')
+        else:
+            messages.error(request, f'BAD Request')
+            return redirect('dashboard')                            

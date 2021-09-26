@@ -11,7 +11,6 @@ class User(AbstractUser):
     total_followers = models.IntegerField(null=True, blank=True)
     linkedin_zipname = models.CharField(max_length=100, null=True, blank=True)
     facebook_zipname = models.CharField(max_length=100, null=True, blank=True)
-    twitter_zipname = models.CharField(max_length=100, null=True, blank=True)
+    twitter_username = models.CharField(max_length=100, null=True, blank=True)
     credit_score = models.IntegerField(null=True, blank=True)
-
 
