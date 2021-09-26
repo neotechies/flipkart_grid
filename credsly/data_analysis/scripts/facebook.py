@@ -33,8 +33,8 @@ text_analysis_client = boto3.client(
 #################################################Variables For Testing###################################################################################
 
 # file_name = "../userDataUploads/fbdata.zip"  #testing
-# userID= "mohit1234"
-# path="../userDataUploads/"+userID+"/facebook"
+userID= "mohit1234"
+path="../../userDataUploads/"+userID+"/facebook"
 
 ######################################Making Extraction Directory##########################################################
 
@@ -225,7 +225,62 @@ def getCommentsList(path, fb_dict):
         #return None  
     finally:
         print("Analysis Of Comments Completed")
-    
+
+#**********************************Posts Analysis*********************************************************************    
+
+def posts_multiprocess(post):
+        positivePosts=0
+        negativePosts=0
+        totalPosts=0
+
+        try:
+            for data in post['data']:
+                lang_response = text_analysis_client.detect_dominant_language(Text=data['post'])
+                languages = lang_response['Languages']
+                lang_code = languages[0]['LanguageCode']
+                response = text_analysis_client.detect_sentiment(Text=data['post'], LanguageCode=lang_code)
+                totalPosts+=1
+                if(response['Sentiment']=='POSITIVE'):
+                    positivePosts+=1
+                elif(response['Sentiment']=='NEGATIVE'):
+                    negativePosts+=1
+        except Exception as e:
+            return None, None, None
+            #print(e)
+        return positivePosts, negativePosts, totalPosts
+
+
+
+def getPostsList(path, fb_dict):
+    print("Starting Analysis Of Posts...")
+    try:
+        f = open(path+"/posts/your_posts_1.json",)
+        data = json.load(f)
+        positivePosts=0
+        negativePosts=0
+        totalPosts=0
+
+        p = multiprocessing.Pool() 
+        result = p.map(posts_multiprocess, data)
+        for r in result:
+            if(r[0]!=None):
+                positivePosts+=r[0]
+                negativePosts+=r[1]
+                totalPosts+=r[2]          
+        fb_dict['positivePosts'] = positivePosts
+        fb_dict['negativePosts'] = negativePosts
+        fb_dict['totalPosts'] = totalPosts
+        # return positiveComments,negativeComments, totalComments
+
+    except Exception as e:
+        print(e)
+        fb_dict['positivePosts'] = None
+        fb_dict['negativePosts'] = None
+        fb_dict['totalPosts'] = None
+        #return None  
+    finally:
+        print("Analysis Of Posts Completed")
+
 #************************************************Post's Interaction Analysis******************************************************************                       
 
 def getPostsInteractionsCount(path, fb_dict):
@@ -336,7 +391,9 @@ def getImageSentimentInfo(path, fb_dict):
         fb_dict['totalNegativeImagesPercentage'] = None
         #return None
     finally:
-        print("Analysis Of Images Completed")        
+        print("Analysis Of Images Completed")
+
+
 
 #*******************************
 # ****************************************Main Function************************************************************      
@@ -359,6 +416,7 @@ def getFacebookData(zipName, userID, analysis_data):
     p5 = multiprocessing.Process(target=getPostsInteractionsCount, args=(path, fb_dict))
     p6 = multiprocessing.Process(target=getImageSentimentInfo, args=(path, fb_dict))
     p7 = multiprocessing.Process(target=getProfileInfo, args=(path, fb_dict))
+    p8 = multiprocessing.Process(target=getPostsList, args=(path, fb_dict))
 
     p1.start()
     p2.start()
@@ -367,6 +425,7 @@ def getFacebookData(zipName, userID, analysis_data):
     p5.start()
     p6.start()
     p7.start()
+    p8.start()
 
     p1.join()
     p2.join()
@@ -375,6 +434,7 @@ def getFacebookData(zipName, userID, analysis_data):
     p5.join()
     p6.join()
     p7.join()
+    p8.join()
     analysis_data['facebook_data']=fb_dict.copy()
     print("FACEBOOK DATA ANALYSIS COMPLETED")
     # totalFriends = getFriendsCount(path)
