@@ -13,7 +13,7 @@ from purgo_malum import client as client1
 import csv
 import boto3
 import multiprocessing
-
+import pytz
 #................................................................................................................................................................................#
 
 
@@ -67,9 +67,9 @@ def userInfo(api,screen_name):
     numberOfTweets = user.statuses_count   # Number of tweets by users
     location = user.location              # Location of a user if mentioned
     description = user.description         # Bio of a user
-    twitterDate= user.created_at            # Age on twitter
-    delta = datetime.now() 
-    twitterAge=delta-twitterDate
+    twitterDate= user.created_at
+    delta = datetime.now(pytz.utc) 
+    twitterAge=delta-twitterDate # Age on twitter
     tweetData={}
     tweets = api.user_timeline(screen_name = screen_name,count=200)
     tweetsList = [tweet.text for tweet in tweets]

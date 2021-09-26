@@ -18,7 +18,7 @@ def generate_credit_score(twitter_username, fb_zipname, linkedin_zipname, userID
         p2.join()
         p3.join()
         print(analysis_data)
-        return
+        # print(json.dumps(analysis_data,sort_keys=False, indent=2))
 
 generate_credit_score("mbcse50","asda","linkedin-mbcse50.zip","mohit1234")
 
