@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+    email = models.EmailField(unique=True)
     total_posts = models.IntegerField(null=True, blank=True)
     total_friends = models.IntegerField(null=True, blank=True)
     total_likes = models.IntegerField(null=True, blank=True)
