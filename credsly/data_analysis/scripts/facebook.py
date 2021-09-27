@@ -33,8 +33,8 @@ text_analysis_client = boto3.client(
 #################################################Variables For Testing###################################################################################
 
 # file_name = "../userDataUploads/fbdata.zip"  #testing
-userID= "mohit1234"
-path="../../userDataUploads/"+userID+"/facebook"
+# userID= "mohit1234"
+# path="../../userDataUploads/"+userID+"/facebook"
 
 ######################################Making Extraction Directory##########################################################
 

@@ -122,8 +122,8 @@ def twitterSentimentAnalysis(tweetData,tweetList):
     for r in result:
         totalPositiveScore+=r[0]
         totalNegativeScore+=r[1]
-    positivityPercent= (totalPositiveScore/tweetData['tweet_count'])*100
-    negativityPercent= (totalNegativeScore/tweetData['tweet_count'])*100
+    positivityPercent= (totalPositiveScore/tweetData['tweet_count'])
+    negativityPercent= (totalNegativeScore/tweetData['tweet_count'])
     
     print("sentiment analysis done!!!")
     return positivityPercent,negativityPercent
