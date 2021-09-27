@@ -183,16 +183,16 @@ def credit_assignment(data_table):
     priority_map={
             'age': priority_one_score,
             'total_connections': priority_one_score,
-            'total_skills': priority_three_score,
-            'incoming_invitations': priority_three_score,
-            'total_likes': priority_three_score,
             'positive_posts_score': priority_one_score,
             'negative_posts_score': priority_one_score,
             'negative_image_score': priority_one_score,
             'negative_page_score':priority_two_score,
             'positive_comments_score': priority_two_score,
             'negative_comments_score':priority_two_score,
-            'negative_groups' : priority_two_score
+            'negative_groups' : priority_two_score,
+            'total_skills': priority_three_score,
+            'incoming_invitations': priority_three_score,
+            'total_likes': priority_three_score,
     }
     
     print(credit_score)
