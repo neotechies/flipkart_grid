@@ -21,6 +21,7 @@ image_analysis_client = boto3.client(
     'rekognition',
     aws_access_key_id=ACCESS_KEY,
     aws_secret_access_key=SECRET_KEY,
+    region_name = 'us-west-2'
 )
 
 text_analysis_client = boto3.client(
