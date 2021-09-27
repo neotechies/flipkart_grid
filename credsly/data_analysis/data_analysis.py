@@ -21,6 +21,7 @@ def generate_credit_score(twitter_username, fb_zipname, linkedin_zipname, userID
         # print(json.dumps(analysis_data,sort_keys=False, indent=2))
         data_table=generate_table(analysis_data)
         table_form=pd.DataFrame(data_table)
+        credit_score,total_credit= credit_assignment(table_form)
         
         
         
@@ -125,8 +126,8 @@ def generate_table(analysis_data):
                 fb_likes= analysis_data['facebook_data']['totalReactionsOnPost']
         if(analysis_data['facebook_data']['totalComments']!=None):
                 fb_comments= analysis_data['facebook_data']['totalComments']
-        if(analysis_data['facebook_data']['fb_registration']!=None):
-                fb_timestamp= analysis_data['facebook_data']['fb_registration']
+        if(analysis_data['facebook_data']['profileInfo']['fb_registration']!=None):
+                fb_timestamp= analysis_data['facebook_data']['profileInfo']['fb_registration']
         today= datetime.now()
         joining_date=datetime.fromtimestamp(int(fb_timestamp))
         interaction_days=today-joining_date
@@ -189,56 +190,78 @@ def generate_table(analysis_data):
         return data_table
 
 
-data_table=generate_table(analysis_data)
-table_form=pd.DataFrame(data_table)
+# data_table=generate_table(analysis_data)
+# table_form=pd.DataFrame(data_table)
      
                 
                 
             
-def credit_assignment(x):   #pass table_form as argument
+def credit_assignment(x):
+    
 
     credit_score=0
+    total_credit=0
     priority_one_score=100
     priority_two_score=80
     priority_three_score=50
+    
     if(x['age'][0]>18 and x['age'][0]<=35):
         credit_score+= x['age'][0]*2.857
+        total_credit+= priority_one_score
     elif(x['age'][0]>35 and x['age'][0]<65):
         credit_score+= priority_one_score-(x['age'][0]/(65-x['age'][0]))
+        total_credit+= priority_one_score
     elif(x['age'][0]<18):
         print("Not eligible due to age")
+        total_credit+= priority_one_score
 
-
+    
+    
     if(x['total_connections'][0]>=80000):
         credit_score+=priority_one_score
+        total_credit+= priority_one_score
     elif((x['total_connections'][0]<80000)):
-        credit_score+= (priority_one_score/80000)*x['total_connections']
-
-    if(x['total_skills'][0]>25):
+        credit_score+= (priority_one_score/80000)*x['total_connections'][0]
+        total_credit+= priority_one_score
+    
+    
+    skill_count=x['total_skills'][0]
+    if(skill_count>25):
         credit_score+= priority_three_score
-    elif(x['total_skills'][0]<=25 and x['total_skills']>=1):
-        credit_score+=priority_three_score- (x['total_skills'][0]/(25-x['total_skills'][0]))
+        total_credit+= priority_three_score
+    elif(skill_count<=25 and skill_count>=1):
+        credit_score+=priority_three_score- (skill_count/(25-skill_count))
+        total_credit+= priority_three_score
 
     invitationPercent=(x['incoming_invitations'][0]/x['total_connections'][0])
     credit_score+= (invitationPercent*priority_three_score)
 
     likePercent= (x['total_likes'][0]/x['total_posts'][0])
     credit_score+= (likePercent*priority_three_score)
+    total_credit+= priority_three_score
 
     credit_score+= x['positive_posts_score'][0]
+    total_credit+= priority_one_score
     credit_score-= x['negative_posts_score'][0]
+    
 
     credit_score+= priority_one_score-(x['negative_image_score'][0]*priority_one_score)
+    total_credit+= priority_one_score
 
     credit_score+= x['positive_comments_score'][0]
+    total_credit+= priority_one_score
     credit_score-= x['negative_comments_score'][0]
+    
 
 
     credit_score+= priority_two_score-(x['negative_image_score'][0]*priority_two_score)
+    total_credit+= priority_two_score
 
     credit_score+= priority_two_score-(x['negative_groups'][0]*priority_two_score)
+    total_credit+= priority_two_score
 
-    return credit_score
+    return credit_score,total_credit
+
      
 
                 
