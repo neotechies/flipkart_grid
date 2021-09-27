@@ -81,6 +81,7 @@ def logoutuser(request):
      
 def uploadFacebookZip(request):
         if request.method == 'POST' and request.user.is_authenticated: 
+            print(request)
             fs= FileSystemStorage() 
             fs.save(str(request.user.username)+"-facebook.zip",request.FILES['fbzip'])
             userdata = User.objects.get(username=request.user)
