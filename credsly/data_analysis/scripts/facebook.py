@@ -39,14 +39,14 @@ text_analysis_client = boto3.client(
 ######################################Making Extraction Directory##########################################################
 
 def checkAndMakeDir(userID):
-    if(os.path.isdir("../userDataUploads/"+userID)):
-        if(os.path.isdir("../userDataUploads/"+userID+"/facebook")):
-            shutil.rmtree("../userDataUploads/"+userID+"/facebook")
-            os.mkdir("../userDataUploads/"+userID+"/facebook") 
+    if(os.path.isdir(str(BASE_DIR)+"/userDataUploads/"+userID)):
+        if(os.path.isdir(str(BASE_DIR)+"/userDataUploads/"+userID+"/facebook")):
+            shutil.rmtree(str(BASE_DIR)+"/userDataUploads/"+userID+"/facebook")
+            os.mkdir(str(BASE_DIR)+"/userDataUploads/"+userID+"/facebook") 
         else:
-            os.mkdir("../userDataUploads/"+userID+"/facebook")   
+            os.mkdir(str(BASE_DIR)+"/userDataUploads/"+userID+"/facebook")   
     else:
-        os.makedirs("../userDataUploads/"+userID+"/facebook")
+        os.makedirs(str(BASE_DIR)+"/userDataUploads/"+userID+"/facebook")
 
 #**********************************************************Friends Analysis**********************************************************************************                 
 
@@ -401,12 +401,12 @@ def getImageSentimentInfo(path, fb_dict):
 
 def getFacebookData(zipName, userID, analysis_data):
     print("STARTING FACEBOOK DATA ANALYSIS")
-    # checkAndMakeDir(userID)
+    checkAndMakeDir(userID)
     path=str(BASE_DIR)+"/userDataUploads/"+userID+"/facebook"
     filename=str(BASE_DIR)+"/userDataUploads/ZIP_UPLOADS/"+zipName
-    # with ZipFile(file_name, 'r') as zip:
-    #     # extracting all the files
-    #     zip.extractall(path)
+    with ZipFile(filename, 'r') as zip:
+        # extracting all the files
+        zip.extractall(path)
     manager = multiprocessing.Manager()
     fb_dict = manager.dict()
     p1 = multiprocessing.Process(target=getFriendsCount, args=(path,fb_dict ))

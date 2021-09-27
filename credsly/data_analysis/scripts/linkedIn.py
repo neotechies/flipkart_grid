@@ -32,14 +32,14 @@ client = boto3.client(
 
 #................................................................................................................................................................................#
 def checkAndMakeDir(userID):
-    if(os.path.isdir("../userDataUploads/"+userID)):
-        if(os.path.isdir("../userDataUploads/"+userID+"/linkedIn")):
-            shutil.rmtree("../userDataUploads/"+userID+"/linkedIn")
-            os.mkdir("../userDataUploads/"+userID+"/linkedIn") 
+    if(os.path.isdir(str(BASE_DIR)+"/userDataUploads/"+userID)):
+        if(os.path.isdir(str(BASE_DIR)+"/userDataUploads/"+userID+"/linkedIn")):
+            shutil.rmtree(str(BASE_DIR)+"/userDataUploads/"+userID+"/linkedIn")
+            os.mkdir(str(BASE_DIR)+"/userDataUploads/"+userID+"/linkedIn") 
         else:
-            os.mkdir("../userDataUploads/"+userID+"/linkedIn")   
+            os.mkdir(str(BASE_DIR)+"/userDataUploads/"+userID+"/linkedIn")   
     else:
-        os.makedirs("../userDataUploads/"+userID+"/linkedIn")
+        os.makedirs(str(BASE_DIR)+"/userDataUploads/"+userID+"/linkedIn")
         
         
 #................................................................................................................................................................................#

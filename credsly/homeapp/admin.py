@@ -6,7 +6,7 @@ class Admin(UserAdmin):
     'username', 'email', 'first_name', 'last_name', 'is_staff',
     'total_posts', 'total_friends', 'total_likes', 'total_comments',
     'total_followers', 'linkedin_zipname', 'facebook_zipname',
-    'twitter_username', 'credit_score'
+    'twitter_username', 'credit_score', 'total_credit'
     )
 
     fieldsets = (
@@ -28,7 +28,7 @@ class Admin(UserAdmin):
         ('Additional info', {
             'fields': ('total_posts', 'total_friends', 'total_likes', 'total_comments',
             'total_followers', 'linkedin_zipname', 'facebook_zipname',
-            'twitter_username', 'credit_score')
+            'twitter_username', 'credit_score','total_credit')
         })
     )
 
@@ -51,7 +51,7 @@ class Admin(UserAdmin):
         ('Additional info', {
             'fields': ('total_posts', 'total_friends', 'total_likes', 'total_comments',
             'total_followers', 'linkedin_zipname', 'facebook_zipname',
-            'twitter_username', 'credit_score')
+            'twitter_username', 'credit_score', 'total_credit')
         })
     )
 

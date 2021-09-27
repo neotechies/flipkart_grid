@@ -18,6 +18,8 @@ urlpatterns = [
     path('fbzipupload', views.uploadFacebookZip, name='fbzipupload'),
     path('linkedinzipupload', views.uploadLinkedinZip, name='linkedinzipupload'),
     path('twitterusernameupload', views.uploadTwitterUsername, name='twitterusernameupload'),
+    path('getcreditscore', views.get_credit_score, name='getcreditscore'),
+
 
 
 ]

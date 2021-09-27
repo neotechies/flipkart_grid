@@ -1,4 +1,4 @@
-import scripts
+from data_analysis import scripts
 import multiprocessing
 import pandas as pd
 from datetime import datetime, date
@@ -73,6 +73,7 @@ def generate_table(analysis_data):
                 linkedIn_incoming=analysis_data['linkedIn_data']['incomingInvitations']
         if(analysis_data['facebook_data']['totalFriendRequestsRecieved']!=None):
                 fb_incoming=analysis_data['facebook_data']['totalFriendRequestsRecieved']
+
         #Average of LinkedIn and Facebook requests        
         incoming_connections= int((linkedIn_incoming+fb_incoming)/2)                      
         
@@ -106,9 +107,11 @@ def generate_table(analysis_data):
         
         #Fetching No of days since joined social Medias
         interaction_days = 0.001 # least For Division Purpose
-        fb_timestamp=None        
+        fb_timestamp=None  
+              
         if(analysis_data['facebook_data']['profileInfo']['fb_registration']!=None):
                 fb_timestamp= analysis_data['facebook_data']['profileInfo']['fb_registration']
+
         today= datetime.now()
         fb_joining_date=datetime.fromtimestamp(int(fb_timestamp))
 
@@ -170,7 +173,7 @@ def generate_table(analysis_data):
                                            'negative_image_score':negative_image_score,'positive_comments_score':positive_comments,'negative_comments_score':negative_comments,'negative_page_score':negative_page,
                                            'negative_groups':negative_group,'social_interaction':fb_interaction}, ignore_index=True)
                         
-        return data_table          
+        return data_table,total_posts,total_likes,fb_comments,total_connections          
             
 def credit_assignment(data_table):
     credit_score=0
@@ -191,17 +194,20 @@ def credit_assignment(data_table):
             'positive_comments_score': priority_two_score,
             'negative_comments_score':priority_two_score,
             'negative_groups' : priority_two_score,
-            
+
             'total_skills': priority_three_score,
             'incoming_invitations': priority_three_score,
             'total_likes': priority_three_score,
     }
+
+    dont_count=['negative_comments_score','negative_posts_score']
     
     print(credit_score)
 
     # Calculating Total Credit score
     for key in priority_map:
-            total_credit+=priority_map[key]
+            if key not in dont_count:
+                total_credit+=priority_map[key]
 
     # Getting Score For age Min age 18 and max age 65
     # Max Credit Score Age 35
@@ -270,7 +276,7 @@ def credit_assignment(data_table):
     print(credit_score)
 
     # Generating credit Score from Negative Comments   
-    credit_score-= (data_table['negative_comments_score'][0]*priority_map['negative_comments_score'])
+    credit_score-=(data_table['negative_comments_score'][0]*priority_map['negative_comments_score'])
 
     print(credit_score)
 
@@ -284,7 +290,7 @@ def credit_assignment(data_table):
 
      
 
-def generate_credit_score(twitter_username, fb_zipname, linkedin_zipname, userID):
+def generate_credit_score(userID, twitter_username, fb_zipname, linkedin_zipname):
         manager = multiprocessing.Manager()
         analysis_data = manager.dict()
         p1 = multiprocessing.Process(target= scripts.getFacebookData, args=(fb_zipname,userID,analysis_data))
@@ -298,19 +304,16 @@ def generate_credit_score(twitter_username, fb_zipname, linkedin_zipname, userID
         p2.join()
         p3.join()
 
-        # try:
-        data_table=generate_table(analysis_data)
-        table_form=pd.DataFrame(data_table)
-        credit_score,total_credit= credit_assignment(table_form)
-        print(credit_score,total_credit)
-        # except Exception as e:
-        #         print(e)
-        #         print(None, None)
-
-        
-        
-
-generate_credit_score("mbcse50","asda","linkedin-mbcse50.zip","mohit1234")                
+        try:
+                data_table,total_posts,total_likes,fb_comments,total_connections=generate_table(analysis_data)
+                table_form=pd.DataFrame(data_table)
+                credit_score,total_credit= credit_assignment(table_form)
+                print(credit_score,total_credit)
+                return credit_score,total_credit,total_posts,total_likes,fb_comments,total_connections
+        except Exception as e:
+                print(e)
+                return None,None,None,None,None,None
+                
                  
                         
                         

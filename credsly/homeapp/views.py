@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.files.storage import FileSystemStorage
+import data_analysis
+
 User=get_user_model()
 import uuid
 
@@ -113,3 +115,23 @@ def uploadTwitterUsername(request):
         else:
             messages.error(request, f'BAD Request')
             return redirect('dashboard')                            
+
+def get_credit_score(request):
+    if request.user.is_authenticated:
+        userdata = User.objects.get(username=request.user)
+        if(userdata.twitter_username==None or userdata.facebook_zipname==None or userdata.linkedin_zipname==None):
+            messages.error(request, f'Please upload all data to proceed')
+            return redirect('dashboard')
+        credit_score,total_credit,total_posts,total_likes,fb_comments,total_connections =  data_analysis.generate_credit_score(userdata.username, userdata.twitter_username,userdata.facebook_zipname,userdata.linkedin_zipname)  
+        userdata.credit_score=credit_score
+        userdata.total_posts=total_posts
+        userdata.total_likes=total_likes
+        userdata.total_friends=total_connections
+        userdata.total_comments=fb_comments
+        userdata.total_credit=total_credit
+        userdata.save()
+        return redirect('dashboard')
+
+    else:
+        messages.error(request, f'BAD Request')
+        return redirect('dashboard')    
