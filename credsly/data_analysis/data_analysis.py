@@ -196,6 +196,7 @@ def credit_assignment(data_table):
     }
     
     print(credit_score)
+
     # Calculating Total Credit score
     for key in priority_map:
             total_credit+=priority_map[key]
@@ -210,16 +211,16 @@ def credit_assignment(data_table):
     elif(data_table['age'][0]<18):
         print("Not eligible due to age")
 
-    print(credit_score)      
+    print(credit_score)     
 
     # Generating Credit Score From Total Connections
-    
     if(data_table['total_connections'][0]>=80000):
         credit_score+=priority_map['total_connections']
     elif((data_table['total_connections'][0]<80000)):
         credit_score+= ((priority_map['total_connections']/80000)*data_table['total_connections'][0])
 
-    print(credit_score)    
+    print(credit_score) 
+
     # Generating Credit Score From Total Skills 
     skill_count=data_table['total_skills'][0]
     if(skill_count>25):
@@ -228,44 +229,55 @@ def credit_assignment(data_table):
         credit_score+=(priority_map['total_skills']/25)*skill_count
 
     print(credit_score)    
+
     # Generating credit Score from Invitations
     invitationPercent=(data_table['incoming_invitations'][0]/data_table['total_connections'][0])
     credit_score+= (invitationPercent*priority_map['incoming_invitations'])
 
     print(credit_score)
+
     # Generating credit Score from Likes
     likePercent= (data_table['total_likes'][0]/data_table['total_posts'][0])
     credit_score+= (likePercent*priority_map['total_likes'])
 
     print(credit_score)
+
     # Generating credit Score from Positive Posts
     credit_score+= (data_table['positive_posts_score'][0]*priority_map['positive_posts_score'])
     
     print(credit_score)
+
     # Generating credit Score from Negative Posts    
     credit_score-= (data_table['negative_posts_score'][0]*priority_map['negative_posts_score'])
     
     print(credit_score)
+
     # Generating credit Score from Negative Images   
     credit_score+= (priority_map['negative_image_score']-(data_table['negative_image_score'][0]*priority_map['negative_image_score']))
     
     print(credit_score)
+
     # Generating credit Score from Negative pages   
     credit_score+= (priority_map['negative_page_score']-(data_table['negative_page_score'][0]*priority_map['negative_page_score']))
 
     print(credit_score)
+
     # Generating credit Score from Postive Comments   
     credit_score+= (data_table['positive_comments_score'][0]*priority_map['positive_comments_score'])
     
     print(credit_score)
+
     # Generating credit Score from Negative Comments   
     credit_score-= (data_table['negative_comments_score'][0]*priority_map['negative_comments_score'])
 
     print(credit_score)
+
     # Generating credit Score from Negative Groups  
     credit_score+= (priority_map['negative_groups']-(data_table['negative_groups'][0]*priority_map['negative_groups']))
     
     print(credit_score)
+
+    # Returning Credit Score and total Credit
     return credit_score,total_credit
 
      
