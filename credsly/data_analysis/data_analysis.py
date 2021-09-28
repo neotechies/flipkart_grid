@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime, date
 import colorama
 from colorama import Fore
+from homeapp.models import PriorityScores
 
 def generate_table(analysis_data):
         print(Fore.GREEN + 'Generating Table')
@@ -182,10 +183,19 @@ def credit_assignment(data_table):
 
     credit_score=0
     total_credit=0
+    #Create Default Score If Not exists
+    try: 
+        PriorityScores.objects.create().save()
+    except Exception as e:
+            pass
 
-    priority_one_score=100
-    priority_two_score=80
-    priority_three_score=50
+    
+    # Get Weights
+    weights = PriorityScores.objects.filter().first()
+
+    priority_one_score=int(weights.priority_one_weight)
+    priority_two_score=int(weights.priority_two_weight)
+    priority_three_score=int(weights.priority_three_weight)
 
     priority_map={
             'age': priority_one_score,

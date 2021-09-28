@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User
+from .models import User,PriorityScores
+
+
 class Admin(UserAdmin):
     list_display = (
     'username', 'email', 'first_name', 'last_name', 'is_staff',
@@ -56,3 +58,4 @@ class Admin(UserAdmin):
     )
 
 admin.site.register(User, Admin)
+admin.site.register(PriorityScores)
