@@ -185,7 +185,7 @@ def credit_assignment(data_table):
     total_credit=0
     #Create Default Score If Not exists
     try: 
-        PriorityScores.objects.create().save()
+        PriorityScores().save()
     except Exception as e:
             pass
 

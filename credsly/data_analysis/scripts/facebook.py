@@ -374,7 +374,7 @@ def image_multiprocessing(filename):
 
             return negativeImages,totalImages  
         except Exception as e:
-            print(Fore.RED + str(e) +Fore.GREEN +" ByPassing")
+            # print(Fore.RED + str(e) +Fore.GREEN +" Forwarding to next Image")
             return 0,0      
 
 def getImageSentimentInfo(path, fb_dict):
