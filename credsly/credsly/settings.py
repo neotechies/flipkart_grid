@@ -149,3 +149,6 @@ except FileExistsError:
     pass
 
 MEDIA_ROOT = BASE_DIR / "userDataUploads/ZIP_UPLOADS"
+
+import warnings
+warnings.filterwarnings('ignore')

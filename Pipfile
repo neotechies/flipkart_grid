@@ -12,6 +12,7 @@ pandas = "*"
 requests = "*"
 boto3 = "*"
 purgomalum = "*"
+colorama = "*"
 
 [dev-packages]
 

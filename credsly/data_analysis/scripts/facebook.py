@@ -7,13 +7,16 @@ import glob
 from purgo_malum import client as client1
 import multiprocessing
 from pathlib import Path
+import colorama
+from colorama import Fore
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 ########################################################Configuration Keys#######################################################################################
 
 ACCESS_KEY="AKIAQI6GMTIGYNVJZOAQ"
 SECRET_KEY="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"
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 #####################################################AWS Clients###################################################################################
 
@@ -37,7 +40,7 @@ text_analysis_client = boto3.client(
 # userID= "mohit1234"
 # path="../../userDataUploads/"+userID+"/facebook"
 
-######################################Making Extraction Directory##########################################################
+######################################Checking and making directory for zip Extraction##########################################################
 
 def checkAndMakeDir(userID):
     if(os.path.isdir(str(BASE_DIR)+"/userDataUploads/"+userID)):
@@ -52,34 +55,34 @@ def checkAndMakeDir(userID):
 #**********************************************************Friends Analysis**********************************************************************************                 
 
 def getFriendsCount(path, fb_dict):
-    print("Starting Analysis Of Friend's Count...")
+    print(Fore.GREEN+"Starting Analysis Of Friend's Count...")
     try:
         f = open(path+"/friends_and_followers/friends.json",)
         data = json.load(f)
         fb_dict['totalFriends'] = len(data['friends_v2'])
         #return len(data['friends_v2'])
     except Exception as e:
-        print("while Getting Friends Count for Facebook"+e)
+        print(Fore.RED +"while Getting Friends Count for Facebook"+ str(e))
         fb_dict['totalFriends'] = None
         #return None
     finally:    
-        print("Analysis Of Friend's Count Completed")
+        print(Fore.YELLOW +"Analysis Of Friend's Count Completed")
 
 #*****************************************************Friend Requests Analysis*************************************************************************S      
 
 def getReceivedFriendRequestsCount(path, fb_dict):
-    print("Starting Analysis Of Friend Request's...")
+    print(Fore.GREEN+"Starting Analysis Of Friend Request's...")
     try:
         f = open(path+"/friends_and_followers/friend_requests_received.json",)
         data = json.load(f)
         fb_dict['totalFriendRequestsRecieved'] = len(data['received_requests_v2'])
         #return len(data['received_requests_v2'])
     except Exception as e:
-        print("while Getting Friend Requests Count for Facebook"+e)
+        print(Fore.RED +"while Getting Friend Requests Count for Facebook"+ str(e))
         fb_dict['totalFriendRequestsRecieved'] = None
         #return None
     finally:    
-        print("Analysis Of Friend Request's Completed")
+        print(Fore.YELLOW +"Analysis Of Friend Request's Completed")
 
 #************************************************Page Followed and Liked Analysis**********************************************************************************************************S
 
@@ -92,12 +95,12 @@ def pagefollow_multiprocessing(page_followed):
             if(client1.contains_profanity(page['name'])):      #Checks for Bad words
                 negativePages+=1 
     except Exception as e:
-        print(e)            
+        print(Fore.RED + str(e))            
     return negativePages, totalPages
 
 
 def getPageFollowedList(path, sub_fb_dict):
-    print("Starting Analysis Of Pages Followed...")
+    print(Fore.GREEN +"Starting Analysis Of Pages Followed...")
     try:
         f = open(path+"/pages/pages_you_follow.json",)
         totalPages = 0
@@ -112,12 +115,12 @@ def getPageFollowedList(path, sub_fb_dict):
         sub_fb_dict['t2']=totalPages
         #return (negativePages,totalPages)
     except Exception as e:
-        print(e)
+        print(Fore.RED  + str(e))
         sub_fb_dict['n2'] = None
         sub_fb_dict['t2'] = None
         #return None 
     finally:      
-        print("Analysis Of Pages Followed Completed")
+        print(Fore.YELLOW +"Analysis Of Pages Followed Completed")
 
 def pageliked_multiprocessing(page):
     totalPages =1
@@ -126,11 +129,11 @@ def pageliked_multiprocessing(page):
         if(client1.contains_profanity(page['name'])):      #Checks for Bad words
             negativePages+=1  
     except Exception as e:
-        print(e)
+        print(Fore.RED + str(e))
     return negativePages, totalPages    
 
 def getPageLikedList(path, sub_fb_dict):
-    print("Starting Analysis Of Pages Liked...")
+    print(Fore.GREEN +"Starting Analysis Of Pages Liked...")
     try:
         f = open(path+"/pages/pages_you've_liked.json",)
         data = json.load(f)
@@ -142,21 +145,21 @@ def getPageLikedList(path, sub_fb_dict):
             negativePages+=r[0]
             totalPages+=r[1]        
         #return data['page_likes_v2']
-        # print(totalPages)
-        # print(negativePages)
+        # print(Fore.GREEN +Fore.GREEN +totalPages)
+        # print(Fore.GREEN +Fore.GREEN +negativePages)
         sub_fb_dict['n1']=negativePages
         sub_fb_dict['t1']=totalPages
         #return (negativePages,totalPages)
     except Exception as e:
-        print(e)
+        print(Fore.RED + str(e))
         sub_fb_dict['n1'] = None
         sub_fb_dict['t1'] = None
         #return None  
     finally:    
-        print("Analysis Of Pages Liked Completed")
+        print(Fore.YELLOW +"Analysis Of Pages Liked Completed")
 
 def getPageList(path,fb_dict):
-    print("Starting Analysis Of Pages...")
+    print(Fore.GREEN+"Starting Analysis Of Pages...")
     manager = multiprocessing.Manager()
     sub_fb_dict = manager.dict()
     p1 = multiprocessing.Process(target=getPageLikedList, args=(path,sub_fb_dict ))
@@ -167,7 +170,7 @@ def getPageList(path,fb_dict):
     p2.join()
     # n1,t1 = getPageLikedList(path)
     # n2,t2 = getPageFollowedList(path)  
-    print("Analysis Of Pages Completed")
+    print(Fore.YELLOW +"Analysis Of Pages Completed")
     fb_dict['negativePageListPercentage'] = (sub_fb_dict['n1']+sub_fb_dict['n2'])/(sub_fb_dict['t1']+sub_fb_dict['t2'])
     #return (sub_fb_dict['n1']+sub_fb_dict['n2'])/(sub_fb_dict['t1']+sub_fb_dict['t2'])   
 
@@ -191,13 +194,13 @@ def comment_array_multiprocess(post):
                     negativeComments+=1
         except Exception as e:
             return None, None, None
-            #print(e)
+            #print(Fore.GREEN +Fore.GREEN +e)
         return positiveComments, negativeComments, totalComments
 
 
 
 def getCommentsList(path, fb_dict):
-    print("Starting Analysis Of Comments...")
+    print(Fore.GREEN +"Starting Analysis Of Comments...")
     try:
         f = open(path+"/comments_and_reactions/comments.json",)
         data = json.load(f)
@@ -219,13 +222,13 @@ def getCommentsList(path, fb_dict):
         #return positiveComments,negativeComments, totalComments
 
     except Exception as e:
-        print(e)
+        print(Fore.RED + str(e))
         fb_dict['positiveComments'] = None
         fb_dict['negativeComments'] = None
         fb_dict['totalComments'] = None
         #return None  
     finally:
-        print("Analysis Of Comments Completed")
+        print(Fore.YELLOW +"Analysis Of Comments Completed")
 
 #**********************************Posts Analysis*********************************************************************    
 
@@ -247,13 +250,13 @@ def posts_multiprocess(post):
                     negativePosts+=1
         except Exception as e:
             return None, None, None
-            #print(e)
+            #print(Fore.GREEN +Fore.GREEN +e)
         return positivePosts, negativePosts, totalPosts
 
 
 
 def getPostsList(path, fb_dict):
-    print("Starting Analysis Of Posts...")
+    print(Fore.GREEN +"Starting Analysis Of Posts...")
     try:
         f = open(path+"/posts/your_posts_1.json",)
         data = json.load(f)
@@ -274,30 +277,30 @@ def getPostsList(path, fb_dict):
         # return positiveComments,negativeComments, totalComments
 
     except Exception as e:
-        print(e)
+        print(Fore.RED + str(e))
         fb_dict['positivePosts'] = None
         fb_dict['negativePosts'] = None
         fb_dict['totalPosts'] = None
         #return None  
     finally:
-        print("Analysis Of Posts Completed")
+        print(Fore.YELLOW +"Analysis Of Posts Completed")
 
 #************************************************Post's Interaction Analysis******************************************************************                       
 
 def getPostsInteractionsCount(path, fb_dict):
     ## Likes Count
-    print("Starting Analysis Of Posts...")
+    print(Fore.GREEN +"Starting Analysis Of Posts...")
     try:
         f = open(path+"/comments_and_reactions/posts_and_comments.json",)
         data = json.load(f)
         fb_dict['totalReactionsOnPost'] = len(data['reactions_v2'])
         #return len(data['reactions_v2'])
     except Exception as e:
-        print(e)
+        print(Fore.RED + str(e))
         fb_dict['totalReactionsOnPost'] = None
         #return None    
     finally:
-        print("Analysis Of Posts Completed")
+        print(Fore.YELLOW +"Analysis Of Posts Completed")
 
 #*************************************************Analysis of groups Joined********************************************************************S
 def groups_multiprocessing(grp):
@@ -308,7 +311,7 @@ def groups_multiprocessing(grp):
     return negativeGroups, totalGroups    
 
 def getProfileInfo(path, fb_dict):
-    print("Starting Analysis Of Profile...")
+    print(Fore.GREEN +"Starting Analysis Of Profile...")
     try:
         f = open(path+"/profile_information/profile_information.json",)
         data = json.load(f)
@@ -347,30 +350,35 @@ def getProfileInfo(path, fb_dict):
         #return profileInfo
 
     except Exception as e:
-        print(e)
+        print(Fore.RED + str(e))
         fb_dict['profileInfo'] = None
         #return None
     finally:
-        print("Analysis Of Profile Completed") 
+        print(Fore.YELLOW +"Analysis Of Profile Completed") 
 
 #*******************************************************Analysis of Images Uploaded*****************************************************************************S
 def image_multiprocessing(filename):
-        totalImages = 1
-        negativeImages = 0
-        image = open(filename,'rb');
-        image_read = image.read()
-        response = image_analysis_client.detect_moderation_labels(
-            Image={
-                'Bytes': image_read,
-            },
-        )
-        if(len(response['ModerationLabels'])>0):
-            negativeImages+=1
+        try:
+            totalImages = 1
+            negativeImages = 0
+            image = open(filename,'rb');
+            image_read = image.read()
+            response = image_analysis_client.detect_moderation_labels(
+                Image={
+                    'Bytes': image_read,
+                },
+            )
+            # print(response)
+            if(len(response['ModerationLabels'])>0):
+                negativeImages+=1
 
-        return negativeImages,totalImages    
+            return negativeImages,totalImages  
+        except Exception as e:
+            print(Fore.RED + str(e) +Fore.GREEN +" ByPassing")
+            return 0,0      
 
 def getImageSentimentInfo(path, fb_dict):
-    print("Starting Analysis Of Images Uploaded...") 
+    print(Fore.GREEN +"Starting Analysis Of Images Uploaded...") 
     try:
         extensions = ['*.gif', '*.png', '*.jpg', '*.jpeg']
         totalImages = 0
@@ -388,11 +396,11 @@ def getImageSentimentInfo(path, fb_dict):
         fb_dict['totalNegativeImagesPercentage'] = (negativeImages/totalImages)           
         #return (negativeImages/totalImages)   
     except Exception as e:
-        print(e)
+        print(Fore.RED + str(e))
         fb_dict['totalNegativeImagesPercentage'] = None
         #return None
     finally:
-        print("Analysis Of Images Completed")
+        print(Fore.YELLOW +"Analysis Of Images Completed")
 
 
 
@@ -401,7 +409,7 @@ def getImageSentimentInfo(path, fb_dict):
 #*******************************
 
 def getFacebookData(zipName, userID, analysis_data):
-    print("STARTING FACEBOOK DATA ANALYSIS")
+    print(Fore.GREEN +"STARTING FACEBOOK DATA ANALYSIS")
     checkAndMakeDir(userID)
     path=str(BASE_DIR)+"/userDataUploads/"+userID+"/facebook"
     filename=str(BASE_DIR)+"/userDataUploads/ZIP_UPLOADS/"+zipName
@@ -437,7 +445,7 @@ def getFacebookData(zipName, userID, analysis_data):
     p7.join()
     p8.join()
     analysis_data['facebook_data']=fb_dict.copy()
-    print("FACEBOOK DATA ANALYSIS COMPLETED")
+    print(Fore.YELLOW+"FACEBOOK DATA ANALYSIS COMPLETED")
     # totalFriends = getFriendsCount(path)
     # totalFriendRequestsRecieved =getReceivedFriendRequestsCount(path)
     # negativePageListPercentage = getPageList(path)

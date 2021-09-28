@@ -14,8 +14,9 @@ import csv
 import boto3
 import multiprocessing
 import pytz
-#................................................................................................................................................................................#
-
+import colorama
+from colorama import Fore
+###################################################Configurations#####################################################################################################
 
 #Twitter credentials
 consumer_key = 'Fkq1YtWMXJfm7rqFQe6bUMKnk'
@@ -27,7 +28,7 @@ access_token_secret = 'f9zpd5uYABZCiK28Cixp5kR3dy6bFbXybDfwiWRMFvaa3'
 ACCESS_KEY="AKIAQI6GMTIGYNVJZOAQ"
 SECRET_KEY="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"
 
-
+#######################################AWS Clients#########################################################################################################3
 client = boto3.client(
     'comprehend',
     aws_access_key_id=ACCESS_KEY,
@@ -35,8 +36,7 @@ client = boto3.client(
     region_name = 'us-west-2'
 )
 
-#................................................................................................................................................................................#
-
+#######################################################################################################################################################################
 
 # Authenticate to Twitter
 def veryfyingUser():
@@ -46,20 +46,22 @@ def veryfyingUser():
     
     try:
         api.verify_credentials()
-        print("Authentication OK")
+        print(Fore.GREEN +"Authentication OK")
          
     
     except:
-        print("Error during authentication")
+        print(Fore.RED +"Error During Authentication")
 
     return api
 
 
-#................................................................................................................................................................................#
+#***************************************************************************************************************************************************************************
 
 
 #Getting other informations of a user
 def userInfo(api,screen_name):
+    print(Fore.GREEN +"Starting User Data Extraction from Twitter...")
+
     user=api.get_user(screen_name=screen_name)  # fetching the user
     id= user.id_str
     
@@ -82,59 +84,64 @@ def userInfo(api,screen_name):
     tweetData['twitter_age']= str(twitterAge.days)+ ' days'
     tweetData['twitter_bio']= description
     tweetData['total_likes']= totalLikes
+    print(Fore.YELLOW +"User Data Extraction from Twitter Completed!!!")
     return tweetData,tweetsList
     
-#................................................................................................................................................................................#
-# api=veryfyingUser()
-# x=userInfo(api,'mbcse50')
-# print(x)
-
+#*****************************************************************************************************************************************************************************8
 
 def multiProcessingTweets(tweet):
-    positiveScore=0
-    negativeScore=0
-    lang_response = client.detect_dominant_language(Text=tweet)
-    languages = lang_response['Languages']
-    lang_code = languages[0]['LanguageCode']
+    try:
+        positiveScore=0
+        negativeScore=0
+        lang_response = client.detect_dominant_language(Text=tweet)
+        languages = lang_response['Languages']
+        lang_code = languages[0]['LanguageCode']
 
-    response = client.detect_sentiment(
-                Text=tweet, LanguageCode=lang_code)
-    
-    
-    if(response['Sentiment']=='POSITIVE'):
-        positiveScore+=1
-    elif(response['Sentiment']=='NEGATIVE'):
-        negativeScore+=1
+        response = client.detect_sentiment(
+                    Text=tweet, LanguageCode=lang_code)
         
-    return positiveScore,negativeScore
+        
+        if(response['Sentiment']=='POSITIVE'):
+            positiveScore+=1
+        elif(response['Sentiment']=='NEGATIVE'):
+            negativeScore+=1
+            
+        return positiveScore,negativeScore
+    except Exception as e:
+            return 0,0   
 
 
-#Sentiment Analysis of the data
+#********************Sentiment Analysis of the data****************************************************************************************************************************
+
 def twitterSentimentAnalysis(tweetData,tweetList):
-    print("starting sentiment analysis of tweets")
+    print(Fore.GREEN +"Starting Sentiment Analysis of Tweets...")
     
-    totalPositiveScore=0
-    totalNegativeScore=0
-    
-    p = multiprocessing.Pool()
-    result = p.map(multiProcessingTweets, tweetList)
+    try:
+        totalPositiveScore=0
+        totalNegativeScore=0
         
-    for r in result:
-        totalPositiveScore+=r[0]
-        totalNegativeScore+=r[1]
-    positivityPercent= (totalPositiveScore/tweetData['tweet_count'])
-    negativityPercent= (totalNegativeScore/tweetData['tweet_count'])
-    
-    print("sentiment analysis done!!!")
-    return positivityPercent,negativityPercent
+        p = multiprocessing.Pool()
+        result = p.map(multiProcessingTweets, tweetList)
+            
+        for r in result:
+            totalPositiveScore+=r[0]
+            totalNegativeScore+=r[1]
+
+        positivityPercent= (totalPositiveScore/tweetData['tweet_count'])
+        negativityPercent= (totalNegativeScore/tweetData['tweet_count'])
+        
+        return positivityPercent,negativityPercent
+    except Exception as e:
+            print(Fore.RED + str(e))
+            return None,None    
+    finally:
+        print(Fore.YELLOW +"Sentiment Analysis of Tweets Completed!!!")
 
 
-
-#................................................................................................................................................................................#
-
+#*****************************************************************************************************************************************************************************************
 
 def getTwitterData(username,analysis_data):
-    print("STARTING TWITTER DATA ANALYSIS")
+    print(Fore.GREEN +"STARTING TWITTER DATA ANALYSIS")
 
     
     api=veryfyingUser()
@@ -145,11 +152,11 @@ def getTwitterData(username,analysis_data):
     tweetData['negativityScore']=negativityPercent
     
     analysis_data['twitter_data']=tweetData.copy()
-    # print(analysis_data)
-    print("TWITTER DATA ANALYSIS COMPLETED")
+    # print(Fore.GREEN +analysis_data)
+    print(Fore.YELLOW +"TWITTER DATA ANALYSIS COMPLETED")
     
     
 
-#................................................................................................................................................................................#
+#......................................................................................................................................
 
     

@@ -7,14 +7,16 @@ import boto3
 import base64
 import multiprocessing
 from pathlib import Path
+import colorama
+from colorama import Fore
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-#................................................................................................................................................................................#
-#AWS client credentials
-
+###################################################Configurations#########################################################################################################################
 ACCESS_KEY="AKIAQI6GMTIGYNVJZOAQ"
 SECRET_KEY="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"
 
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+#####################################################AWS Clients################################################################################################################
 
 client = boto3.client(
     'comprehend',
@@ -23,14 +25,13 @@ client = boto3.client(
     region_name = 'us-west-2'
 )
 
-#................................................................................................................................................................................#
-
+######################################For Testing#####################################################################################################################################
 
 # file_name = "../userDataUploads/linkedInData.zip"  #testing
 # userID='avinash'
 # path="../userDataUploads/"+userID+"/linkedIn" #testing
 
-#................................................................................................................................................................................#
+########################################Checking and making directory for zip Extraction####################################################################################################################
 def checkAndMakeDir(userID):
     if(os.path.isdir(str(BASE_DIR)+"/userDataUploads/"+userID)):
         if(os.path.isdir(str(BASE_DIR)+"/userDataUploads/"+userID+"/linkedIn")):
@@ -42,11 +43,10 @@ def checkAndMakeDir(userID):
         os.makedirs(str(BASE_DIR)+"/userDataUploads/"+userID+"/linkedIn")
         
         
-#................................................................................................................................................................................#
+#***************************************Fetching profile information**********************************************************************************************************************
 
-# Fetching profile information
 def getProfileInfo(path,linkedIn_dict):
-    print("Starting the profile Info analysis...")
+    print(Fore.GREEN +"Starting the Linkedin Profile Info analysis...")
     
     try:
         filePath=path+'/Profile.csv'
@@ -56,19 +56,19 @@ def getProfileInfo(path,linkedIn_dict):
         # return profileJson
             
     except Exception as e:
-        print(e)
+        print(Fore.RED +str(e))
         linkedIn_dict['profileJson']=None
         # return None
     finally:
-        print("Analysis completed!!")
+        print(Fore.YELLOW +"Linkedin Profile Info Analysis completed!!")
         
     
 #profileJson=getProfileInfo(path)
 
-#................................................................................................................................................................................#
+#************************************************************************************************************************************************************
 
 def getEmail(path,linkedIn_dict):
-    print("Fetching the user's email...")
+    print(Fore.GREEN +"Fetching the user's email...")
     try:
         filePath=path+'/Email Addresses.csv'
         data=pd.read_csv(filePath,error_bad_lines=False)
@@ -76,19 +76,16 @@ def getEmail(path,linkedIn_dict):
         linkedIn_dict['email']=json.loads(emailJson)["Email Address"]
         # return emailJson
     except Exception as e:
-        print(e)
+        print(Fore.RED + str(e))
         linkedIn_dict['email']=None
         # return None
     finally:
-        print("email fetched!!!")
+        print(Fore.YELLOW +"User Email fetched!!!")
     
-#email=getEmail(path)
-
-#................................................................................................................................................................................#
-
+#************************************************************************************************************************************************
 
 def getSentInvitations(path,linkedIn_dict):
-    print("Analysisng the incoming invitations...")
+    print(Fore.GREEN +"Analysing the Incoming Invitations...")
     try:
         filePath=path+'/Invitations.csv'
         data=pd.read_csv(filePath,error_bad_lines=False)
@@ -98,21 +95,17 @@ def getSentInvitations(path,linkedIn_dict):
         # return sentInvitations
         
     except Exception as e:
-        print(e)
+        print(Fore.RED +str(e))
         linkedIn_dict['incomingInvitations']=None
         # return None
     
     finally:
-        print('Analysis completed!!!')
+        print(Fore.YELLOW +'Incoming Invitations Analysis completed!!!')
 
-#................................................................................................................................................................................#
-
-        
-# sentInvites=getSentInvitations(path)
-# print(sentInvites)
+#********************************************************************************************************************************************
 
 def getSkills(path,linkedIn_dict):
-    print("Extracting the users skills...")
+    print(Fore.GREEN +"Extracting the Users Skills...")
     try:
         filePath=path+'/Skills.csv'
         data=pd.read_csv(filePath,error_bad_lines=False)
@@ -121,18 +114,17 @@ def getSkills(path,linkedIn_dict):
         # return skillsCount
         
     except Exception as e:
-        print(e)
+        print(Fore.RED +str(e))
         linkedIn_dict['skillsCount']=None
         # return None
     
     finally:
-        print("Extraction done!!!")
-#skillscount=getSkills(path)
+        print(Fore.YELLOW +"User Skills Extraction Completed!!!")
 
 #................................................................................................................................................................................#
 
 def getTotalConnections(path,linkedIn_dict):
-    print("Analysing the total linkedIn connections...")
+    print(Fore.GREEN +"Analysing the LinkedIn Connections...")
     try:
         filePath=path+'/Connections.csv'
         data=pd.read_csv(filePath,error_bad_lines=False,skiprows=3)
@@ -140,30 +132,22 @@ def getTotalConnections(path,linkedIn_dict):
         linkedIn_dict['totalConnections']=totalConnections
         # return totalConnections
     except Exception as e:
-        print(e)
+        print(Fore.RED +str(e))
         linkedIn_dict['totalConnections']=None   
     
     finally:
-        print("Analysis done!!!")
-        
-# totalConnections=getTotalConnections(path)
-# print(totalConnections)
-   
-   
-        
+        print(Fore.YELLOW +"LinkedIn Connections Analysis Completed!!!")
+            
 #................................................................................................................................................................................#
 
-        
-
 def getlinkedInData(zipName,userID,analysis_data):
-    print("STARTING LINKEDIN DATA ANALYSIS")
+    print(Fore.GREEN +"STARTING LINKEDIN DATA ANALYSIS")
 
     checkAndMakeDir(userID)
     path=str(BASE_DIR)+"/userDataUploads/"+userID+"/linkedIn"
     filename = str(BASE_DIR)+"/userDataUploads/ZIP_UPLOADS/"+zipName
     with ZipFile(filename, 'r') as zip:
         # extracting all the files
-        
         zip.extractall(path)
     
     manager = multiprocessing.Manager()
@@ -173,8 +157,6 @@ def getlinkedInData(zipName,userID,analysis_data):
     p3 = multiprocessing.Process(target=getSentInvitations, args=(path, linkedIn_dict))
     p4 = multiprocessing.Process(target=getSkills, args=(path, linkedIn_dict))
     p5 = multiprocessing.Process(target=getTotalConnections, args=(path, linkedIn_dict))
-
-    
 
     p1.start()
     p2.start()
@@ -189,7 +171,7 @@ def getlinkedInData(zipName,userID,analysis_data):
     p5.join()
       
     analysis_data['linkedIn_data']=linkedIn_dict.copy()
-    print("LINKEDIN DATA ANALYSIS COMPLETED")
+    print(Fore.YELLOW +"LINKEDIN DATA ANALYSIS COMPLETED")
 
     # linkedInData={}
     
@@ -207,7 +189,7 @@ def getlinkedInData(zipName,userID,analysis_data):
     
     
 # if __name__ == '__main__':
-#     linkedInData=getlinkedInData(file_name,'avinash')
-#     print(linkedInData)
+#     linkedInData=getlinkedInData(file_name,'aaaa')
+#     print(Fore.GREEN +linkedInData)
 
 #................................................................................................................................................................................#

@@ -2,9 +2,11 @@ from data_analysis import scripts
 import multiprocessing
 import pandas as pd
 from datetime import datetime, date
+import colorama
+from colorama import Fore
 
 def generate_table(analysis_data):
-        
+        print(Fore.GREEN + 'Generating Table')
         data_table = pd.DataFrame(columns=['name', 'email', 'location','age','education',
                                            'total_skills','total_connections','incoming_invitations',
                                            'total_posts','total_likes','positive_posts_score','negative_posts_score',
@@ -176,6 +178,8 @@ def generate_table(analysis_data):
         return data_table,total_posts,total_likes,fb_comments,total_connections          
             
 def credit_assignment(data_table):
+    print(Fore.GREEN + 'Calculating Credit Score')
+
     credit_score=0
     total_credit=0
 
@@ -202,12 +206,13 @@ def credit_assignment(data_table):
 
     dont_count=['negative_comments_score','negative_posts_score']
     
-    print(credit_score)
+
 
     # Calculating Total Credit score
     for key in priority_map:
             if key not in dont_count:
                 total_credit+=priority_map[key]
+
 
     # Getting Score For age Min age 18 and max age 65
     # Max Credit Score Age 35
@@ -219,7 +224,7 @@ def credit_assignment(data_table):
     elif(data_table['age'][0]<18):
         print("Not eligible due to age")
 
-    print(credit_score)     
+     
 
     # Generating Credit Score From Total Connections
     if(data_table['total_connections'][0]>=80000):
@@ -227,7 +232,7 @@ def credit_assignment(data_table):
     elif((data_table['total_connections'][0]<80000)):
         credit_score+= ((priority_map['total_connections']/80000)*data_table['total_connections'][0])
 
-    print(credit_score) 
+ 
 
     # Generating Credit Score From Total Skills 
     skill_count=data_table['total_skills'][0]
@@ -236,54 +241,54 @@ def credit_assignment(data_table):
     elif(skill_count<=25 and skill_count>=1):
         credit_score+=(priority_map['total_skills']/25)*skill_count
 
-    print(credit_score)    
+    
 
     # Generating credit Score from Invitations
     invitationPercent=(data_table['incoming_invitations'][0]/data_table['total_connections'][0])
     credit_score+= (invitationPercent*priority_map['incoming_invitations'])
 
-    print(credit_score)
+
 
     # Generating credit Score from Likes
     likePercent= (data_table['total_likes'][0]/data_table['total_posts'][0])
     credit_score+= (likePercent*priority_map['total_likes'])
 
-    print(credit_score)
+
 
     # Generating credit Score from Positive Posts
     credit_score+= (data_table['positive_posts_score'][0]*priority_map['positive_posts_score'])
     
-    print(credit_score)
+
 
     # Generating credit Score from Negative Posts    
     credit_score-= (data_table['negative_posts_score'][0]*priority_map['negative_posts_score'])
     
-    print(credit_score)
+
 
     # Generating credit Score from Negative Images   
     credit_score+= (priority_map['negative_image_score']-(data_table['negative_image_score'][0]*priority_map['negative_image_score']))
     
-    print(credit_score)
+
 
     # Generating credit Score from Negative pages   
     credit_score+= (priority_map['negative_page_score']-(data_table['negative_page_score'][0]*priority_map['negative_page_score']))
 
-    print(credit_score)
+
 
     # Generating credit Score from Postive Comments   
     credit_score+= (data_table['positive_comments_score'][0]*priority_map['positive_comments_score'])
     
-    print(credit_score)
+
 
     # Generating credit Score from Negative Comments   
     credit_score-=(data_table['negative_comments_score'][0]*priority_map['negative_comments_score'])
 
-    print(credit_score)
+
 
     # Generating credit Score from Negative Groups  
     credit_score+= (priority_map['negative_groups']-(data_table['negative_groups'][0]*priority_map['negative_groups']))
     
-    print(credit_score)
+
 
     # Returning Credit Score and total Credit
     return credit_score,total_credit
@@ -291,6 +296,7 @@ def credit_assignment(data_table):
      
 
 def generate_credit_score(userID, twitter_username, fb_zipname, linkedin_zipname):
+        print(Fore.GREEN + 'Generating Credit Score')
         manager = multiprocessing.Manager()
         analysis_data = manager.dict()
         p1 = multiprocessing.Process(target= scripts.getFacebookData, args=(fb_zipname,userID,analysis_data))
@@ -308,13 +314,13 @@ def generate_credit_score(userID, twitter_username, fb_zipname, linkedin_zipname
                 data_table,total_posts,total_likes,fb_comments,total_connections=generate_table(analysis_data)
                 table_form=pd.DataFrame(data_table)
                 credit_score,total_credit= credit_assignment(table_form)
-                print(credit_score,total_credit)
+                print(Fore.BLUE + str(credit_score) + " / " + str(total_credit))
                 return credit_score,total_credit,total_posts,total_likes,fb_comments,total_connections
         except Exception as e:
                 print(e)
                 return None,None,None,None,None,None
-                
-                 
+        finally:        
+                print(Fore.YELLOW + 'Credit Score Generation For User '+userID+" Completed")         
                         
                         
                 
