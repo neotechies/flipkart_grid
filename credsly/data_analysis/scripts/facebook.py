@@ -445,7 +445,7 @@ def getFacebookData(zipName, userID, analysis_data):
     p7.join()
     p8.join()
     analysis_data['facebook_data']=fb_dict.copy()
-    print(Fore.YELLOW+"FACEBOOK DATA ANALYSIS COMPLETED")
+    print(Fore.CYAN+"FACEBOOK DATA ANALYSIS COMPLETED")
     # totalFriends = getFriendsCount(path)
     # totalFriendRequestsRecieved =getReceivedFriendRequestsCount(path)
     # negativePageListPercentage = getPageList(path)

@@ -153,7 +153,7 @@ def getTwitterData(username,analysis_data):
     
     analysis_data['twitter_data']=tweetData.copy()
     # print(Fore.GREEN +analysis_data)
-    print(Fore.YELLOW +"TWITTER DATA ANALYSIS COMPLETED")
+    print(Fore.CYAN +"TWITTER DATA ANALYSIS COMPLETED")
     
     
 

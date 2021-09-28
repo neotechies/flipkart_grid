@@ -171,7 +171,7 @@ def getlinkedInData(zipName,userID,analysis_data):
     p5.join()
       
     analysis_data['linkedIn_data']=linkedIn_dict.copy()
-    print(Fore.YELLOW +"LINKEDIN DATA ANALYSIS COMPLETED")
+    print(Fore.CYAN +"LINKEDIN DATA ANALYSIS COMPLETED")
 
     # linkedInData={}
     
