@@ -30,13 +30,15 @@ These features can use this new innovative method of credit score assignment bas
 
 ## Data Extraction and Pre-processing
 The dataset in this project has been sourced from three major social medias:
-Twitter
-Facebook
-LinkedIn
+- Twitter
+- Facebook
+- LinkedIn
+
 The twitter data is easily accessible from the twitter’s developer account via ‘tweepy’ python package. But Facebook and LinkedIn doesn’t provide permission to other users easily to use someone else’s data. But one can always get their own data if requested to these social media support team. So, a user can bring their own data from Facebook and LinkedIn (which is provided in the form of zip file) and upload on the portal. For the Twitter, one just needs to enter the username of the twitter handle and all the necessary data will be fetched for the further analysis.
 
 All the data from the three social media sources have been pre-processed and organized in the json format for the analysis of various credit features. 
-Various useful details have been extracted from LinkedIn like- 
+Various useful details have been extracted from LinkedIn like-
+
 - Profile Information: Name, Location, Email, Industry, DOB
 - Total Connections
 - Invitations received
@@ -62,7 +64,7 @@ Similarly, from facebook following many features have been captured for processi
 - Total comments by the user and its analysis
 - Likes and reactions by the user on pages and other posts
 
-All these above features that have been taken out of the data from the social media have been classified into the different features required for determining credit score.
+**All these above features that have been taken out of the data from the social media have been classified into the different features required for determining credit score**
 
 ![](https://github.com/neotechies/flipkart_grid/blob/main/assets/json.png)
 
@@ -108,8 +110,9 @@ All these models were kind of making our whole algorithm slow and time consuming
 ![](https://github.com/neotechies/flipkart_grid/blob/main/assets/prioirtyscores.png)
 
 #### The Calculations
-- Different features have been assigned different priorities based on the priorities and their magnitude of contribution.
-In case of age, if a user is below 18, the user is announced ineligible for determining credit worthiness. The user’s credit worthiness increases linearly  from the age of 18 and reaches its peak at 35 from where it again starts decreasing. After the age of 65, the user again becomes ineligible for any credit score. The following graph and it’s equation aptly captures the credit score assignment based on age factor:
+Different features have been assigned different priorities based on the priorities and their magnitude of contribution.
+
+- In case of age, if a user is below 18, the user is announced ineligible for determining credit worthiness. The user’s credit worthiness increases linearly  from the age of 18 and reaches its peak at 35 from where it again starts decreasing. After the age of 65, the user again becomes ineligible for any credit score. The following graph and it’s equation aptly captures the credit score assignment based on age factor:
 
 - In case of total connections, followers and friends from all these social medias, we are taking the average of all these to combine it into one feature. Then we are taking a threshold number(80k) of followers below which the credit score is increasing gradually. After that threshold value, every user gets the same priority score. Basically the more number of followers emphasizes the fact that more people trust him and thus credit score can be increased. 
 
