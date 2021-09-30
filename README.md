@@ -114,7 +114,11 @@ Different features have been assigned different priorities based on the prioriti
 
 - In case of age, if a user is below 18, the user is announced ineligible for determining credit worthiness. The user’s credit worthiness increases linearly  from the age of 18 and reaches its peak at 35 from where it again starts decreasing. After the age of 65, the user again becomes ineligible for any credit score. The following graph and it’s equation aptly captures the credit score assignment based on age factor:
 
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/age.png)
+
 - In case of total connections, followers and friends from all these social medias, we are taking the average of all these to combine it into one feature. Then we are taking a threshold number(80k) of followers below which the credit score is increasing gradually. After that threshold value, every user gets the same priority score. Basically the more number of followers emphasizes the fact that more people trust him and thus credit score can be increased. 
+
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/followers.png)
 
 - Similar graph pattern is followed for the skills feature to assign the credit score.
 
