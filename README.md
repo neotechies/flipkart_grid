@@ -26,7 +26,7 @@ Avail EMI
 These features can use this new innovative method of credit score assignment based on social media to give more benefits to the trustworthy users. Besides  more discount for trustworthy users and more such things can be introduced to attract more users. 
 
 ## Flow Diagram
-
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/Flipkart%20GRID.png)
 
 ## Data Extraction and Pre-processing
 The dataset in this project has been sourced from three major social medias:
@@ -49,7 +49,8 @@ From twitter, we extracted the following features for the analysis:
 - Bio
 - Twitter age
 - Likes on tweets
-- LikesAll the tweets by the user
+- Likes
+- All the tweets by the user
 
 Similarly, from facebook following many features have been captured for processing:
 
@@ -62,7 +63,7 @@ Similarly, from facebook following many features have been captured for processi
 - Likes and reactions by the user on pages and other posts
 
 All these above features that have been taken out of the data from the social media have been classified into the different features required for determining credit score.
-
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/Flipkart%20GRID.png)
 
 ## Technical Approach 
 All the features that have been extracted from all the social medias have been characterized into the following features:
@@ -98,9 +99,7 @@ All these models were kind of making our whole algorithm slow and time consuming
 - Different features have been assigned different priorities based on the priorities and their magnitude of contribution.
 In case of age, if a user is below 18, the user is announced ineligible for determining credit worthiness. The user’s credit worthiness increases linearly  from the age of 18 and reaches its peak at 35 from where it again starts decreasing. After the age of 65, the user again becomes ineligible for any credit score. The following graph and it’s equation aptly captures the credit score assignment based on age factor:
 
-
 - In case of total connections, followers and friends from all these social medias, we are taking the average of all these to combine it into one feature. Then we are taking a threshold number(80k) of followers below which the credit score is increasing gradually. After that threshold value, every user gets the same priority score. Basically the more number of followers emphasizes the fact that more people trust him and thus credit score can be increased. 
-
 
 - Similar graph pattern is followed for the skills feature to assign the credit score.
 
