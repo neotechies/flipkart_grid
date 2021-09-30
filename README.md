@@ -25,7 +25,7 @@ Flipkart Pay Later
 Avail EMI
 These features can use this new innovative method of credit score assignment based on social media to give more benefits to the trustworthy users. Besides  more discount for trustworthy users and more such things can be introduced to attract more users. 
 
-## Flow Diagram
+## Solution Flow Diagram
 ![](https://github.com/neotechies/flipkart_grid/blob/main/assets/Flipkart%20GRID.png)
 
 ## Data Extraction and Pre-processing
