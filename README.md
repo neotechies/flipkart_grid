@@ -63,7 +63,8 @@ Similarly, from facebook following many features have been captured for processi
 - Likes and reactions by the user on pages and other posts
 
 All these above features that have been taken out of the data from the social media have been classified into the different features required for determining credit score.
-![](https://github.com/neotechies/flipkart_grid/blob/main/assets/Flipkart%20GRID.png)
+
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/json.png)
 
 ## Technical Approach 
 All the features that have been extracted from all the social medias have been characterized into the following features:
@@ -79,14 +80,23 @@ All the features that have been extracted from all the social medias have been c
 - Followers, connections and Friends
 - Skills Analysis
 
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/pd1.png)
+
 For the content analysis of the user’s posts, sentiment analysis model is implemented to  calculate the overall positivity and negativity on the posts. All these sentiment will contribute to increasing or decreasing the credit score of the user. 
 
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/sentiment.png)
+
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/pd2.png)
+
 Deep learning powered Image recognition model is used to detect the nudity,violence and obnoxious stuffs in the image posted by the users. This factor will further decrement a users credit score.
+
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/imageanalysis.png)
 
 Also NLP based python package is used to analyze the profanity of the groups user has joined and the kind of pages user has liked. If the NLP model detects that the user is in wrong groups and has liked repugnant pages, this will put a question mark on the trust issues of the users and will decrement the credit score.
 
 All these models were kind of making our whole algorithm slow and time consuming. In order to tackle that we have used parallel processing at the functional and non-functional level both which has reduced the time consumption significantly. We are using multiprocessing to run our functions at different processors at the same time.
 
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/multiprocessing1.png)
 
 ## Credit Score Generation Algorithm
 
@@ -94,6 +104,8 @@ All these models were kind of making our whole algorithm slow and time consuming
 - Priority one score
 - Priority two score
 - Priority three score
+
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/prioirtyscores.png)
 
 #### The Calculations
 - Different features have been assigned different priorities based on the priorities and their magnitude of contribution.
@@ -109,6 +121,8 @@ In case of age, if a user is below 18, the user is announced ineligible for dete
 
 **Best part is you can modify the weightage of priority scores from the admin panel of the website as per your convenience, this will change the credit score and total credit accordingly**.
 
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/Screenshot%20from%202021-09-30%2022-39-08.png)
+
 ## Tech Stack
 - Django
 - Machine Learning
@@ -118,6 +132,12 @@ In case of age, if a user is below 18, the user is announced ineligible for dete
 - HTML/CSS/JAVASCRIPT
 - Bootstrap5
 
+## Result/Output
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/outputconsole.png)
+
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/credit_output.png)
+
+![](https://github.com/neotechies/flipkart_grid/blob/main/assets/dashboard.png)
 ## Project Demo
 Github : [https://github.com/neotechies/flipkart_grid](https://github.com/neotechies/flipkart_grid)
 
